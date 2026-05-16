@@ -1,0 +1,43 @@
+import {defineField, defineType} from 'sanity'
+
+export const guideType = defineType({
+  name: 'guide',
+  title: 'Tour guides',
+  type: 'document',
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+    {name: 'seo', title: 'SEO'},
+    {name: 'settings', title: 'Settings'},
+  ],
+  fields: [
+    defineField({name: 'name', title: 'Name', type: 'string', group: 'content', validation: (Rule) => Rule.required()}),
+    defineField({name: 'slug', title: 'Slug', type: 'slug', group: 'content', options: {source: 'name', maxLength: 96}, validation: (Rule) => Rule.required()}),
+    defineField({name: 'role', title: 'Role', type: 'string', group: 'content'}),
+    defineField({name: 'homeRegion', title: 'Home region', type: 'string', group: 'content'}),
+    defineField({name: 'languages', title: 'Languages', type: 'array', of: [{type: 'string'}], options: {layout: 'tags'}, group: 'content'}),
+    defineField({name: 'specialties', title: 'Specialties', type: 'array', of: [{type: 'string'}], options: {layout: 'tags'}, group: 'content'}),
+    defineField({name: 'experienceYears', title: 'Years of experience', type: 'number', group: 'content'}),
+    defineField({name: 'certifications', title: 'Certifications', type: 'array', of: [{type: 'string'}], group: 'content'}),
+    defineField({name: 'totalTours', title: 'Total tours completed', type: 'number', group: 'content'}),
+    defineField({name: 'availability', title: 'Availability window', type: 'string', group: 'content', description: 'e.g. March – October'}),
+    defineField({name: 'highlights', title: 'Highlights (trust bullets)', type: 'array', of: [{type: 'string'}], group: 'content', description: '4–6 short selling points.'}),
+    defineField({name: 'included', title: 'What is included in day rate', type: 'array', of: [{type: 'string'}], group: 'content'}),
+    defineField({name: 'excluded', title: 'What is NOT included', type: 'array', of: [{type: 'string'}], group: 'content'}),
+    defineField({name: 'cancellationPolicy', title: 'Cancellation policy', type: 'text', rows: 3, group: 'content'}),
+    defineField({name: 'pricing', title: 'Pricing', type: 'pricing', group: 'content'}),
+    defineField({name: 'bio', title: 'Bio', type: 'portableContent', group: 'content'}),
+    defineField({name: 'portrait', title: 'Portrait', type: 'mediaImage', group: 'content'}),
+    defineField({name: 'gallery', title: 'Gallery', type: 'array', of: [{type: 'mediaImage'}], group: 'content'}),
+    defineField({name: 'video', title: 'Intro video', type: 'videoEmbed', group: 'content'}),
+    defineField({name: 'faqs', title: 'FAQs', type: 'array', of: [{type: 'faqItem'}], group: 'seo'}),
+    defineField({name: 'seo', title: 'SEO', type: 'seoFields', group: 'seo'}),
+    defineField({name: 'rating', title: 'Rating', type: 'number', group: 'settings', validation: (Rule) => Rule.min(0).max(5)}),
+    defineField({name: 'reviewCount', title: 'Review count', type: 'number', group: 'settings'}),
+    defineField({name: 'featured', title: 'Featured', type: 'boolean', initialValue: false, group: 'settings'}),
+    defineField({name: 'bookable', title: 'Bookable separately', type: 'boolean', initialValue: true, group: 'settings'}),
+    defineField({name: 'status', title: 'Status', type: 'string', initialValue: 'draft', group: 'settings', options: {list: ['draft', 'live', 'hidden']}}),
+  ],
+  preview: {
+    select: {title: 'name', subtitle: 'role', media: 'portrait'},
+  },
+})

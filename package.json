@@ -1,0 +1,30 @@
+{
+  "name": "northern-dreamscape-next",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "sanity": "sanity",
+    "sanity:dev": "sanity dev",
+    "sanity:deploy": "sanity deploy",
+    "sanity:seed": "sanity dataset import sanity/seed.ndjson production --replace"
+  },
+  "dependencies": {
+    "@portabletext/react": "^4.0.3",
+    "@sanity/image-url": "^1.2.0",
+    "@sanity/vision": "^5.24.0",
+    "next": "^16.2.6",
+    "next-sanity": "^12.4.2",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "sanity": "^5.24.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.7"
+  }
+}

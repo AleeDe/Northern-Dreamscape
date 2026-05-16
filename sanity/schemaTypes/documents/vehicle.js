@@ -1,0 +1,43 @@
+import {defineField, defineType} from 'sanity'
+
+export const vehicleType = defineType({
+  name: 'vehicle',
+  title: 'Vehicles',
+  type: 'document',
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+    {name: 'seo', title: 'SEO'},
+    {name: 'settings', title: 'Settings'},
+  ],
+  fields: [
+    defineField({name: 'name', title: 'Name', type: 'string', group: 'content', validation: (Rule) => Rule.required()}),
+    defineField({name: 'slug', title: 'Slug', type: 'slug', group: 'content', options: {source: 'name', maxLength: 96}, validation: (Rule) => Rule.required()}),
+    defineField({name: 'category', title: 'Category', type: 'string', group: 'content', options: {list: ['Car', '4x4 Jeep', 'SUV', 'Coaster', 'Van', 'Airport pickup', 'Motorbike']}}),
+    defineField({name: 'model', title: 'Model', type: 'string', group: 'content'}),
+    defineField({name: 'seats', title: 'Seats', type: 'number', group: 'content', validation: (Rule) => Rule.min(1)}),
+    defineField({name: 'doors', title: 'Doors', type: 'number', group: 'content'}),
+    defineField({name: 'luggageCapacity', title: 'Luggage capacity', type: 'string', group: 'content'}),
+    defineField({name: 'withDriver', title: 'Includes driver', type: 'boolean', initialValue: true, group: 'content'}),
+    defineField({name: 'fuelIncluded', title: 'Fuel included', type: 'boolean', initialValue: false, group: 'content'}),
+    defineField({name: 'routesAllowed', title: 'Routes allowed', type: 'array', of: [{type: 'string'}], options: {layout: 'tags'}, group: 'content'}),
+    defineField({name: 'pricing', title: 'Pricing', type: 'pricing', group: 'content'}),
+    defineField({name: 'shortDescription', title: 'Short description', type: 'text', rows: 3, group: 'content'}),
+    defineField({name: 'highlights', title: 'Highlights (trust bullets)', type: 'array', of: [{type: 'string'}], group: 'content', description: '4–6 short selling points shown on the detail page.'}),
+    defineField({name: 'included', title: 'What is included', type: 'array', of: [{type: 'string'}], group: 'content'}),
+    defineField({name: 'excluded', title: 'What is NOT included', type: 'array', of: [{type: 'string'}], group: 'content'}),
+    defineField({name: 'cancellationPolicy', title: 'Cancellation policy', type: 'text', rows: 3, group: 'content'}),
+    defineField({name: 'acAvailable', title: 'Air conditioning', type: 'boolean', initialValue: true, group: 'content'}),
+    defineField({name: 'insuranceIncluded', title: 'Insurance included', type: 'boolean', initialValue: false, group: 'content'}),
+    defineField({name: 'features', title: 'Features', type: 'array', of: [{type: 'serviceFeature'}], group: 'content'}),
+    defineField({name: 'heroImage', title: 'Hero image', type: 'mediaImage', group: 'content'}),
+    defineField({name: 'gallery', title: 'Gallery', type: 'array', of: [{type: 'mediaImage'}], group: 'content'}),
+    defineField({name: 'faqs', title: 'FAQs', type: 'array', of: [{type: 'faqItem'}], group: 'seo'}),
+    defineField({name: 'seo', title: 'SEO', type: 'seoFields', group: 'seo'}),
+    defineField({name: 'featured', title: 'Featured', type: 'boolean', initialValue: false, group: 'settings'}),
+    defineField({name: 'bookable', title: 'Bookable separately', type: 'boolean', initialValue: true, group: 'settings'}),
+    defineField({name: 'status', title: 'Status', type: 'string', initialValue: 'draft', group: 'settings', options: {list: ['draft', 'live', 'hidden']}}),
+  ],
+  preview: {
+    select: {title: 'name', subtitle: 'category', media: 'heroImage'},
+  },
+})

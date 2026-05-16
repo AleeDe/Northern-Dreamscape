@@ -1,0 +1,57 @@
+import {defineField, defineType} from 'sanity'
+
+export const restaurantType = defineType({
+  name: 'restaurant',
+  title: 'Restaurants',
+  type: 'document',
+  groups: [
+    {name: 'content', title: 'Content', default: true},
+    {name: 'menu', title: 'Menu'},
+    {name: 'seo', title: 'SEO'},
+    {name: 'settings', title: 'Settings'},
+  ],
+  fields: [
+    defineField({name: 'name', title: 'Name', type: 'string', group: 'content', validation: (Rule) => Rule.required()}),
+    defineField({name: 'slug', title: 'Slug', type: 'slug', group: 'content', options: {source: 'name', maxLength: 96}, validation: (Rule) => Rule.required()}),
+    defineField({name: 'location', title: 'Location', type: 'location', group: 'content'}),
+    defineField({
+      name: 'cuisines',
+      title: 'Cuisines',
+      type: 'array',
+      of: [{type: 'string'}],
+      options: {layout: 'tags'},
+      group: 'content',
+      description: 'Examples: Balti, Pakistani, Continental, BBQ, Chinese, Hunza local, Vegetarian.',
+      validation: (Rule) => Rule.min(1).warning('Cuisine helps filtering and SEO.'),
+    }),
+    defineField({name: 'mealTypes', title: 'Meal types', type: 'array', of: [{type: 'string'}], options: {layout: 'tags'}, group: 'content'}),
+    defineField({name: 'priceRange', title: 'Price range', type: 'string', group: 'content', options: {list: ['Budget', 'Mid-range', 'Premium', 'Custom group menu']}}),
+    defineField({name: 'pricing', title: 'Group meal pricing', type: 'pricing', group: 'content'}),
+    defineField({name: 'shortDescription', title: 'Short description', type: 'text', rows: 3, group: 'content'}),
+    defineField({name: 'highlights', title: 'Highlights (trust bullets)', type: 'array', of: [{type: 'string'}], group: 'content', description: '4–6 short selling points shown on detail page.'}),
+    defineField({name: 'seatingCapacity', title: 'Seating capacity', type: 'number', group: 'content'}),
+    defineField({name: 'reservationRequired', title: 'Reservation required', type: 'boolean', initialValue: false, group: 'content'}),
+    defineField({name: 'dietaryOptions', title: 'Dietary options', type: 'array', of: [{type: 'string'}], options: {layout: 'tags'}, group: 'content', description: 'e.g. Vegetarian, Halal, Gluten-free'}),
+    defineField({name: 'cancellationPolicy', title: 'Group booking cancellation policy', type: 'text', rows: 2, group: 'content'}),
+    defineField({name: 'description', title: 'Full description', type: 'portableContent', group: 'content'}),
+    defineField({name: 'openingHours', title: 'Opening hours', type: 'array', of: [{type: 'openingHours'}], group: 'content'}),
+    defineField({name: 'heroImage', title: 'Hero image', type: 'mediaImage', group: 'content'}),
+    defineField({name: 'gallery', title: 'Gallery', type: 'array', of: [{type: 'mediaImage'}], group: 'content'}),
+    defineField({name: 'menuHighlights', title: 'Menu highlights', type: 'array', of: [{type: 'string'}], group: 'menu'}),
+    defineField({name: 'menuImages', title: 'Menu images', type: 'array', of: [{type: 'mediaImage'}], group: 'menu'}),
+    defineField({name: 'goodFor', title: 'Good for', type: 'array', of: [{type: 'string'}], options: {layout: 'tags'}, group: 'menu'}),
+    defineField({name: 'faqs', title: 'FAQs', type: 'array', of: [{type: 'faqItem'}], group: 'seo'}),
+    defineField({name: 'seo', title: 'SEO', type: 'seoFields', group: 'seo'}),
+    defineField({name: 'rating', title: 'Rating', type: 'number', group: 'settings', validation: (Rule) => Rule.min(0).max(5)}),
+    defineField({name: 'reviewCount', title: 'Review count', type: 'number', group: 'settings'}),
+    defineField({name: 'featured', title: 'Featured', type: 'boolean', initialValue: false, group: 'settings'}),
+    defineField({name: 'bookable', title: 'Bookable for groups', type: 'boolean', initialValue: true, group: 'settings'}),
+    defineField({name: 'status', title: 'Status', type: 'string', initialValue: 'draft', group: 'settings', options: {list: ['draft', 'live', 'hidden']}}),
+  ],
+  preview: {
+    select: {title: 'name', cuisines: 'cuisines', media: 'heroImage'},
+    prepare({title, cuisines, media}) {
+      return {title, subtitle: cuisines?.join(', '), media}
+    },
+  },
+})
