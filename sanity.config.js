@@ -69,6 +69,12 @@ const structure = (S) =>
         S.documentTypeList('siteSettings').title('Site Settings')
       ),
 
+      S.divider(),
+
+      S.listItem().title('👥 Admin Users').schemaType('adminUser').child(
+        S.documentTypeList('adminUser').title('Admin Users')
+      ),
+
     ])
 
 export default defineConfig({

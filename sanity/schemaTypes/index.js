@@ -1,5 +1,6 @@
 import {packageType} from './documents/package'
 import {landmarkType} from './documents/landmark'
+import {adminUserType} from './documents/adminUser'
 import {accommodationType} from './documents/accommodation'
 import {vehicleType} from './documents/vehicle'
 import {guideType} from './documents/guide'
@@ -25,6 +26,7 @@ import {portableContentType} from './objects/portableContent'
 export const schemaTypes = [
   packageType,
   landmarkType,
+  adminUserType,
   accommodationType,
   vehicleType,
   guideType,
