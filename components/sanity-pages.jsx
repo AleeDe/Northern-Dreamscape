@@ -129,92 +129,217 @@ function MiniServiceCard({item, label}) {
   )
 }
 
+const PLACE_ICONS = { mountain:'⛰️', lake:'🏞️', valley:'🌄', fort:'🏯', village:'🏘️', pass:'🛤️', glacier:'🧊', park:'🌿', other:'📍' }
+
+const PKG_SERVICE_SECTIONS = [
+  { key: 'accommodations', label: 'Accommodation', icon: '🏨', href: '/accommodation' },
+  { key: 'vehicles',       label: 'Vehicles',       icon: '🚙', href: '/vehicles'      },
+  { key: 'guides',         label: 'Tour Guides',    icon: '🧭', href: '/guides'        },
+  { key: 'restaurants',    label: 'Restaurants',    icon: '🍽️', href: '/restaurants'   },
+]
+
 export function SanityPackageDetailPage({pkg}) {
   if (!pkg) return <SanityNotConfigured />
+
+  // Smart resolve: use package's own links, fallback to destination's links
+  const dest = pkg.destination
+  const resolve = (key) => {
+    const own = pkg[key] || []
+    const fromDest = dest?.[key] || []
+    return own.length ? own : fromDest
+  }
+
+  const accommodations = resolve('accommodations')
+  const vehicles       = resolve('vehicles')
+  const guides         = resolve('guides')
+  const restaurants    = resolve('restaurants')
+  const landmarks      = (pkg.landmarks?.length ? pkg.landmarks : dest?.landmarks) || []
+
+  const hasAnyService = accommodations.length || vehicles.length || guides.length || restaurants.length
 
   return (
     <div className="nd">
       <NavLight activePath="/packages" />
-      <section className="nd-detail-hero" style={{ position: 'relative', minHeight: 720, color: 'var(--bone)', display: 'flex', alignItems: 'end', padding: '80px 56px 80px', overflow: 'hidden' }}>
+
+      {/* ── Hero ── */}
+      <section style={{ position: 'relative', minHeight: 720, color: 'var(--bone)', display: 'flex', alignItems: 'end', padding: '80px 56px 80px', overflow: 'hidden' }}>
         <div className="photo" style={{ position: 'absolute', inset: 0, backgroundImage: `url(${imageUrl(pkg)})` }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(8,22,26,0.86), rgba(8,22,26,0.45), rgba(8,22,26,0.2))' }} />
         <div className="container-wide" style={{ position: 'relative' }}>
-          <div className="eyebrow" style={{ color: 'var(--sand)', marginBottom: 24 }}>{pkg.region} · {pkg.season}</div>
-          <h1 style={{ fontSize: 104, lineHeight: 0.94, color: 'var(--bone)', maxWidth: 980, marginBottom: 26 }}>{pkg.title}</h1>
+          <div className="eyebrow" style={{ color: 'var(--sand)', marginBottom: 24 }}>
+            {pkg.region} · {pkg.season}
+            {dest && <> · <Link href={`/destinations/${dest.slug}`} style={{ color: 'var(--sand)', textDecoration: 'underline', textDecorationColor: 'rgba(245,239,228,0.4)' }}>{dest.name}</Link></>}
+          </div>
+          <h1 style={{ fontSize: 'clamp(48px, 7vw, 104px)', lineHeight: 0.94, color: 'var(--bone)', maxWidth: 980, marginBottom: 26 }}>{pkg.title}</h1>
           <p style={{ fontSize: 21, lineHeight: 1.55, maxWidth: 720, opacity: 0.9 }}>{pkg.summary || pkg.subtitle}</p>
         </div>
       </section>
 
-      <section className="nd-booking-bar" style={{ background: 'var(--ink)', color: 'var(--bone)', padding: '22px 56px', position: 'sticky', top: 0, zIndex: 20 }}>
+      {/* ── Sticky booking bar ── */}
+      <section style={{ background: 'var(--ink)', color: 'var(--bone)', padding: '22px 56px', position: 'sticky', top: 0, zIndex: 20 }}>
         <div className="container-wide" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 24 }}>
-          <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', fontSize: 14 }}>
             <span>{pkg.days} days · {pkg.nights} nights</span>
             <span>{pkg.difficulty}</span>
-            <span>{pkg.rating ? `${pkg.rating} · ${pkg.reviewCount} reviews` : 'Reviews coming soon'}</span>
+            {pkg.rating && <span>★ {pkg.rating} ({pkg.reviewCount} reviews)</span>}
           </div>
           <BookNowButton serviceName={pkg.title} serviceType="package" serviceSlug={pkg.slug} label="Book This Package" />
         </div>
       </section>
 
-      <section className="nd-overview-section" style={{ background: 'var(--bone)', padding: '96px 56px' }}>
-        <div className="container-wide" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 44 }}>
+      {/* ── Overview + mini service cards ── */}
+      <section style={{ background: 'var(--bone)', padding: '96px 56px' }}>
+        <div className="container-wide" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64, alignItems: 'start' }}>
           <div>
             <div className="eyebrow" style={{ color: 'var(--teal-700)', marginBottom: 20 }}>Package overview</div>
-            <h2 style={{ fontSize: 54, lineHeight: 1.05, marginBottom: 24 }}>What you get<br /><em style={{ fontStyle: 'italic', color: 'var(--ember)' }}>before you commit.</em></h2>
-            <p style={{ color: 'var(--muted-ink)', lineHeight: 1.8 }}>{pkg.summary || pkg.subtitle}</p>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-            {(pkg.accommodations || []).slice(0, 2).map((item) => <MiniServiceCard key={item._id} item={item} label="Accommodation" />)}
-            {(pkg.vehicles || []).slice(0, 2).map((item) => <MiniServiceCard key={item._id} item={item} label="Vehicle" />)}
-            {(pkg.guides || []).slice(0, 2).map((item) => <MiniServiceCard key={item._id} item={item} label="Guide" />)}
-            {(pkg.restaurants || []).slice(0, 2).map((item) => <MiniServiceCard key={item._id} item={item} label="Restaurant" />)}
-          </div>
-        </div>
-      </section>
-
-      <section style={{ background: 'var(--ink)', color: 'var(--bone)', padding: '110px 56px' }}>
-        <div className="container-wide">
-          <div style={{ textAlign: 'center', marginBottom: 64 }}>
-            <div className="eyebrow" style={{ color: 'var(--sand)', marginBottom: 22 }}>Day by day itinerary</div>
-            <h2 style={{ fontSize: 76, lineHeight: 0.98, color: 'var(--bone)' }}>A richer route,<br /><em style={{ fontStyle: 'italic', color: 'var(--sand)' }}>ready for map view.</em></h2>
-          </div>
-          <div style={{ display: 'grid', gap: 26 }}>
-            {(pkg.itineraryDays || []).map((day) => (
-              <div key={`${day.dayNumber}-${day.title}`} style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 28, borderTop: '1px solid var(--line-light)', paddingTop: 28 }}>
+            <h2 style={{ fontSize: 54, lineHeight: 1.05, marginBottom: 24 }}>What's included<br /><em style={{ fontStyle: 'italic', color: 'var(--ember)' }}>in this journey.</em></h2>
+            <p style={{ color: 'var(--muted-ink)', lineHeight: 1.8, marginBottom: 28 }}>{pkg.summary || pkg.subtitle}</p>
+            {dest && (
+              <div style={{ padding: '16px 20px', background: 'var(--bone-2)', border: '1px solid var(--line)', display: 'flex', gap: 16, alignItems: 'center' }}>
                 <div>
-                  <div className="mono" style={{ color: 'var(--sand)', marginBottom: 12 }}>DAY {String(day.dayNumber).padStart(2, '0')}</div>
-                  <div style={{ color: 'var(--muted-bone)', lineHeight: 1.6 }}>{day.routeFrom} → {day.routeTo}</div>
-                  <div style={{ color: 'var(--muted-bone)', marginTop: 8 }}>{day.distanceKm ? `${day.distanceKm} km` : ''} {day.travelTime ? `· ${day.travelTime}` : ''}</div>
-                </div>
-                <div>
-                  <h3 style={{ fontSize: 38, lineHeight: 1.08, color: 'var(--bone)', marginBottom: 12 }}>{day.title}</h3>
-                  <p style={{ color: 'var(--muted-bone)', lineHeight: 1.75, marginBottom: 18 }}>{day.summary}</p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
-                    <MiniServiceCard item={day.accommodation} label="Stay" />
-                    <MiniServiceCard item={day.vehicle} label="Vehicle" />
-                    <MiniServiceCard item={day.guide} label="Guide" />
-                    <MiniServiceCard item={day.restaurants?.[0]} label="Meal stop" />
-                  </div>
+                  <div className="mono" style={{ fontSize: 10, color: 'var(--ember)', marginBottom: 4 }}>DESTINATION</div>
+                  <Link href={`/destinations/${dest.slug}`} style={{ fontWeight: 700, fontSize: 17, color: 'var(--ink)', textDecoration: 'none' }}>{dest.name} →</Link>
+                  {dest.tagline && <p style={{ fontSize: 13, color: 'var(--muted-ink)', margin: '4px 0 0' }}>{dest.tagline}</p>}
                 </div>
               </div>
-            ))}
+            )}
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            {accommodations.slice(0, 2).map(i => <MiniServiceCard key={i._id} item={i} label="🏨 Accommodation" />)}
+            {vehicles.slice(0, 2).map(i => <MiniServiceCard key={i._id} item={i} label="🚙 Vehicle" />)}
+            {guides.slice(0, 2).map(i => <MiniServiceCard key={i._id} item={i} label="🧭 Guide" />)}
+            {restaurants.slice(0, 2).map(i => <MiniServiceCard key={i._id} item={i} label="🍽️ Restaurant" />)}
           </div>
         </div>
       </section>
 
-      {!!pkg.faqs?.length && (
-        <section style={{ background: 'var(--bone-2)', padding: '96px 56px' }}>
+      {/* ── Itinerary ── */}
+      {pkg.itineraryDays?.length > 0 && (
+        <section style={{ background: 'var(--ink)', color: 'var(--bone)', padding: '110px 56px' }}>
+          <div className="container-wide">
+            <div style={{ textAlign: 'center', marginBottom: 64 }}>
+              <div className="eyebrow" style={{ color: 'var(--sand)', marginBottom: 22 }}>Day by day</div>
+              <h2 style={{ fontSize: 'clamp(40px, 5vw, 76px)', lineHeight: 0.98, color: 'var(--bone)' }}>Your itinerary,<br /><em style={{ fontStyle: 'italic', color: 'var(--sand)' }}>day by day.</em></h2>
+            </div>
+            <div style={{ display: 'grid', gap: 26 }}>
+              {pkg.itineraryDays.map((day) => (
+                <div key={`${day.dayNumber}-${day.title}`} style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 28, borderTop: '1px solid var(--line-light)', paddingTop: 28 }}>
+                  <div>
+                    <div className="mono" style={{ color: 'var(--sand)', marginBottom: 12 }}>DAY {String(day.dayNumber).padStart(2, '0')}</div>
+                    {(day.routeFrom || day.routeTo) && <div style={{ color: 'var(--muted-bone)', lineHeight: 1.6 }}>{day.routeFrom} → {day.routeTo}</div>}
+                    {(day.distanceKm || day.travelTime) && <div style={{ color: 'var(--muted-bone)', marginTop: 8, fontSize: 13 }}>{day.distanceKm ? `${day.distanceKm} km` : ''} {day.travelTime ? `· ${day.travelTime}` : ''}</div>}
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: 'clamp(24px, 3vw, 38px)', lineHeight: 1.08, color: 'var(--bone)', marginBottom: 12 }}>{day.title}</h3>
+                    <p style={{ color: 'var(--muted-bone)', lineHeight: 1.75, marginBottom: 18 }}>{day.summary}</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+                      <MiniServiceCard item={day.accommodation} label="🏨 Stay" />
+                      <MiniServiceCard item={day.vehicle} label="🚙 Vehicle" />
+                      <MiniServiceCard item={day.guide} label="🧭 Guide" />
+                      <MiniServiceCard item={day.restaurants?.[0]} label="🍽️ Meal" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Famous Landmarks ── */}
+      {landmarks.length > 0 && (
+        <section style={{ background: 'var(--bone)', padding: '80px 56px' }}>
+          <div className="container-wide">
+            <div style={{ marginBottom: 36 }}>
+              <div className="eyebrow" style={{ color: 'var(--teal-700)', marginBottom: 14 }}>
+                {dest ? `Places you'll visit in ${dest.name}` : 'Famous places on this route'}
+              </div>
+              <h2 style={{ fontSize: 'clamp(32px, 4vw, 52px)', lineHeight: 1.05, margin: 0 }}>
+                Must-see <em style={{ fontStyle: 'italic', color: 'var(--ember)' }}>landmarks.</em>
+              </h2>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 22 }}>
+              {landmarks.map((lm) => (
+                <div key={lm._id} style={{ background: 'var(--bone-2)', border: '1px solid var(--line)', overflow: 'hidden' }}>
+                  {lm.heroImage?.asset?.url && (
+                    <div className="photo" style={{ height: 190, backgroundImage: `url(${lm.heroImage.asset.url})` }} />
+                  )}
+                  <div style={{ padding: '18px 20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                      <h3 style={{ fontSize: 18, lineHeight: 1.2, margin: 0 }}>{PLACE_ICONS[lm.category] || '📍'} {lm.name}</h3>
+                      {lm.elevation && <span className="mono" style={{ fontSize: 10, color: 'var(--muted-ink)', flexShrink: 0, marginLeft: 8 }}>{lm.elevation}m</span>}
+                    </div>
+                    {lm.description && <p style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--muted-ink)', margin: '0 0 10px' }}>{lm.description}</p>}
+                    {lm.mapsLink && (
+                      <a href={lm.mapsLink} target="_blank" rel="noopener noreferrer" className="mono" style={{ fontSize: 10, color: 'var(--teal-700)', letterSpacing: '0.1em' }}>
+                        VIEW ON MAP →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── All Included Services ── */}
+      {hasAnyService && (
+        <section style={{ background: 'var(--bone-2)', padding: '80px 56px' }}>
+          <div className="container-wide">
+            <div style={{ marginBottom: 40 }}>
+              <div className="eyebrow" style={{ color: 'var(--teal-700)', marginBottom: 14 }}>Everything arranged for you</div>
+              <h2 style={{ fontSize: 'clamp(32px, 4vw, 52px)', lineHeight: 1.05, margin: 0 }}>
+                Services <em style={{ fontStyle: 'italic', color: 'var(--ember)' }}>included.</em>
+              </h2>
+            </div>
+            {PKG_SERVICE_SECTIONS.map(({ key, label, icon, href }) => {
+              const items = key === 'accommodations' ? accommodations : key === 'vehicles' ? vehicles : key === 'guides' ? guides : restaurants
+              if (!items.length) return null
+              return (
+                <div key={key} style={{ marginBottom: 40 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, paddingBottom: 10, borderBottom: '1px solid var(--line)' }}>
+                    <h3 style={{ margin: 0, fontSize: 20 }}>{icon} {label}</h3>
+                    <Link href={href} className="mono" style={{ fontSize: 10, color: 'var(--ember)', letterSpacing: '0.14em' }}>VIEW ALL →</Link>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
+                    {items.map(item => (
+                      <Link key={item._id} href={`${href}/${item.slug}`} className="pkg-card"
+                        style={{ display: 'block', background: 'var(--bone)', color: 'inherit', textDecoration: 'none' }}>
+                        <div className="photo" style={{ height: 160, backgroundImage: `url(${item.portrait?.asset?.url || item.heroImage?.asset?.url || FALLBACK_IMG})` }} />
+                        <div style={{ padding: '14px 16px' }}>
+                          <div className="mono" style={{ color: 'var(--ember)', fontSize: 10, marginBottom: 5 }}>
+                            {item.cuisines?.join(' · ') || item.category || item.type || item.location?.city || label}
+                          </div>
+                          <h4 style={{ fontSize: 16, lineHeight: 1.25, marginBottom: 6 }}>{item.name || item.title}</h4>
+                          {item.shortDescription && <p style={{ fontSize: 12, color: 'var(--muted-ink)', lineHeight: 1.5, marginBottom: 10 }}>{item.shortDescription}</p>}
+                          <span className="mono" style={{ fontSize: 10, color: 'var(--teal-700)' }}>VIEW DETAILS →</span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* ── FAQs ── */}
+      {pkg.faqs?.length > 0 && (
+        <section style={{ background: 'var(--bone)', padding: '80px 56px' }}>
           <div className="container" style={{ display: 'grid', gap: 18 }}>
-            <h2 style={{ fontSize: 52, lineHeight: 1.05, marginBottom: 22 }}>Questions before booking.</h2>
+            <h2 style={{ fontSize: 48, lineHeight: 1.05, marginBottom: 22 }}>Questions before booking.</h2>
             {pkg.faqs.map((faq) => (
               <div key={faq.question} style={{ borderTop: '1px solid var(--line)', paddingTop: 22 }}>
-                <h3 style={{ fontSize: 24, marginBottom: 8 }}>{faq.question}</h3>
+                <h3 style={{ fontSize: 22, marginBottom: 8 }}>{faq.question}</h3>
                 <p style={{ color: 'var(--muted-ink)', lineHeight: 1.7 }}>{faq.answer}</p>
               </div>
             ))}
           </div>
         </section>
       )}
+
       <Footer />
     </div>
   )
@@ -1157,7 +1282,7 @@ export function SanityDestinationDetailPage({ destination }) {
       )}
 
       {/* ── Famous Places ── */}
-      {destination.famousPlaces?.length > 0 && (
+      {destination.landmarks?.length > 0 && (
         <section style={{ background: 'var(--bone)', padding: '72px 56px' }}>
           <div className="container-wide">
             <div style={{ marginBottom: 40 }}>
@@ -1167,21 +1292,21 @@ export function SanityDestinationDetailPage({ destination }) {
               </h2>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
-              {destination.famousPlaces.map((place, i) => (
-                <div key={i} style={{ background: 'var(--bone-2)', border: '1px solid var(--line)', overflow: 'hidden' }}>
-                  {place.image?.asset?.url && (
-                    <div className="photo" style={{ height: 200, backgroundImage: `url(${place.image.asset.url})` }} />
+              {destination.landmarks.map((lm) => (
+                <div key={lm._id} style={{ background: 'var(--bone-2)', border: '1px solid var(--line)', overflow: 'hidden' }}>
+                  {lm.heroImage?.asset?.url && (
+                    <div className="photo" style={{ height: 200, backgroundImage: `url(${lm.heroImage.asset.url})` }} />
                   )}
                   <div style={{ padding: '20px 22px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                       <h3 style={{ fontSize: 20, lineHeight: 1.2, margin: 0 }}>
-                        {PLACE_ICONS[place.category] || '📍'} {place.name}
+                        {PLACE_ICONS[lm.category] || '📍'} {lm.name}
                       </h3>
-                      {place.elevation && <span className="mono" style={{ fontSize: 10, color: 'var(--muted-ink)', flexShrink: 0, marginLeft: 8 }}>{place.elevation}m</span>}
+                      {lm.elevation && <span className="mono" style={{ fontSize: 10, color: 'var(--muted-ink)', flexShrink: 0, marginLeft: 8 }}>{lm.elevation}m</span>}
                     </div>
-                    {place.description && <p style={{ fontSize: 13.5, lineHeight: 1.65, color: 'var(--muted-ink)', margin: '0 0 12px' }}>{place.description}</p>}
-                    {place.mapsLink && (
-                      <a href={place.mapsLink} target="_blank" rel="noopener noreferrer"
+                    {lm.description && <p style={{ fontSize: 13.5, lineHeight: 1.65, color: 'var(--muted-ink)', margin: '0 0 12px' }}>{lm.description}</p>}
+                    {lm.mapsLink && (
+                      <a href={lm.mapsLink} target="_blank" rel="noopener noreferrer"
                         className="mono" style={{ fontSize: 10, color: 'var(--teal-700)', letterSpacing: '0.1em' }}>
                         VIEW ON MAP →
                       </a>

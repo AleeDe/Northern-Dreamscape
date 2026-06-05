@@ -5,12 +5,12 @@ export const destinationType = defineType({
   title: 'Destinations',
   type: 'document',
   groups: [
-    {name: 'content',  title: '📝 Content',  default: true},
-    {name: 'media',    title: '🖼️ Media'},
-    {name: 'places',   title: '📍 Famous Places'},
-    {name: 'services', title: '🔗 Linked Services'},
-    {name: 'seo',      title: '🔍 SEO & FAQs'},
-    {name: 'settings', title: '⚙️ Settings'},
+    {name: 'content',   title: '📝 Content',        default: true},
+    {name: 'media',     title: '🖼️ Media'},
+    {name: 'landmarks', title: '📍 Famous Places'},
+    {name: 'services',  title: '🔗 Linked Services'},
+    {name: 'seo',       title: '🔍 SEO & FAQs'},
+    {name: 'settings',  title: '⚙️ Settings'},
   ],
   fields: [
     // ── Basic info ───────────────────────────────────────────────────────────
@@ -58,33 +58,14 @@ export const destinationType = defineType({
       }],
     }),
 
-    // ── Famous Locations / Landmarks ─────────────────────────────────────────
+    // ── Famous Places (reference to landmark documents) ──────────────────────
     defineField({
-      name: 'famousPlaces',
+      name: 'landmarks',
       title: 'Famous Places & Landmarks',
+      description: 'Add landmarks from the Landmarks library. Create new ones in Famous Places & Landmarks section.',
       type: 'array',
-      group: 'places',
-      of: [{
-        type: 'object',
-        fields: [
-          defineField({name: 'name',        title: 'Place Name',    type: 'string', validation: (Rule) => Rule.required()}),
-          defineField({name: 'description', title: 'Description',   type: 'text', rows: 2}),
-          defineField({name: 'image',       title: 'Photo',         type: 'mediaImage'}),
-          defineField({name: 'category',    title: 'Category',      type: 'string', options: {list: [
-            {title: 'Mountain / Peak',   value: 'mountain'},
-            {title: 'Lake / River',      value: 'lake'},
-            {title: 'Valley',            value: 'valley'},
-            {title: 'Fort / Historical', value: 'fort'},
-            {title: 'Village',           value: 'village'},
-            {title: 'Pass / Route',      value: 'pass'},
-            {title: 'Glacier',           value: 'glacier'},
-            {title: 'Other',             value: 'other'},
-          ]}}),
-          defineField({name: 'elevation',   title: 'Elevation (m)', type: 'number'}),
-          defineField({name: 'mapsLink',    title: 'Google Maps Link', type: 'url'}),
-        ],
-        preview: {select: {title: 'name', subtitle: 'category', media: 'image'}},
-      }],
+      group: 'landmarks',
+      of: [{type: 'reference', to: [{type: 'landmark'}]}],
     }),
 
     // ── Linked Services ───────────────────────────────────────────────────────
