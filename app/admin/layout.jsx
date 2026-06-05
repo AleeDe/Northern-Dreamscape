@@ -6,12 +6,24 @@ import { usePathname } from 'next/navigation'
 import { useSession, signOut, SessionProvider } from 'next-auth/react'
 
 const NAV_LINKS = [
-  { href: '/admin',          label: 'Overview',  icon: '🏠', roles: ['admin','editor','bookings'] },
-  { href: '/admin/bookings', label: 'Bookings',  icon: '📋', roles: ['admin','editor','bookings'] },
-  { href: '/admin/packages', label: 'Packages',  icon: '📦', roles: ['admin','editor'] },
-  { href: '/admin/services', label: 'Services',  icon: '🏨', roles: ['admin','editor'] },
-  { href: '/admin/users',    label: 'Users',     icon: '👥', roles: ['admin'] },
-  { href: '/studio',         label: 'Studio',    icon: '⚙️', roles: ['admin'] },
+  { href: '/admin',               label: 'Overview',         icon: '🏠', roles: ['admin','editor','bookings'] },
+  { href: '/admin/bookings',      label: 'Bookings',         icon: '📋', roles: ['admin','editor','bookings'] },
+  { divider: true },
+  { href: '/admin/packages',      label: 'Packages',         icon: '📦', roles: ['admin','editor'] },
+  { href: '/admin/destinations',  label: 'Destinations',     icon: '🗺️', roles: ['admin','editor'] },
+  { href: '/admin/landmarks',     label: 'Landmarks',        icon: '📍', roles: ['admin','editor'] },
+  { divider: true },
+  { href: '/admin/services',      label: 'Accommodation',    icon: '🏨', roles: ['admin','editor'] },
+  { href: '/admin/vehicles',      label: 'Vehicles',         icon: '🚙', roles: ['admin','editor'] },
+  { href: '/admin/guides',        label: 'Tour Guides',      icon: '🧭', roles: ['admin','editor'] },
+  { href: '/admin/restaurants',   label: 'Restaurants',      icon: '🍽️', roles: ['admin','editor'] },
+  { divider: true },
+  { href: '/admin/reviews',       label: 'Reviews',          icon: '⭐', roles: ['admin','editor'] },
+  { href: '/admin/blog',          label: 'Journal / Blog',   icon: '📝', roles: ['admin','editor'] },
+  { href: '/admin/authors',       label: 'Authors',          icon: '✍️', roles: ['admin','editor'] },
+  { divider: true },
+  { href: '/admin/settings',      label: 'Site Settings',    icon: '⚙️', roles: ['admin'] },
+  { href: '/admin/users',         label: 'Users',            icon: '👥', roles: ['admin'] },
 ]
 
 function AdminNav({ open, onClose }) {
@@ -43,18 +55,19 @@ function AdminNav({ open, onClose }) {
         </div>
 
         <nav style={{ flex: 1, padding: '12px 0' }}>
-          {links.map(l => {
+          {links.map((l, i) => {
+            if (l.divider) return <div key={i} style={{ height: 1, background: 'rgba(245,239,228,0.08)', margin: '4px 0' }} />
             const active = path === l.href || (l.href !== '/admin' && path.startsWith(l.href))
             return (
               <Link key={l.href} href={l.href} onClick={onClose}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 10,
-                  padding: '11px 18px', color: active ? '#f5efe4' : 'rgba(245,239,228,0.55)',
-                  textDecoration: 'none', fontSize: 13,
+                  padding: '10px 18px', color: active ? '#f5efe4' : 'rgba(245,239,228,0.55)',
+                  textDecoration: 'none', fontSize: 12.5,
                   background: active ? 'rgba(255,255,255,0.08)' : 'transparent',
                   borderLeft: active ? '3px solid #e8822e' : '3px solid transparent',
                 }}>
-                <span style={{ fontSize: 16 }}>{l.icon}</span>
+                <span style={{ fontSize: 15 }}>{l.icon}</span>
                 {l.label}
               </Link>
             )

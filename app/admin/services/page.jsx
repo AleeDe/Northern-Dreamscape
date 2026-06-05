@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useSearchParams } from 'next/navigation'
 import { ImageUpload } from '@/components/admin/ImageUpload'
 
 const TABS = [
@@ -230,7 +231,9 @@ function ServiceModal({ item, _type, onClose, onSaved }) {
 export default function ServicesPage() {
   const [data, setData] = React.useState({})
   const [loading, setLoading] = React.useState(true)
-  const [activeTab, setActiveTab] = React.useState('accommodations')
+  const searchParams = useSearchParams()
+  const tabParam = searchParams.get('tab')
+  const [activeTab, setActiveTab] = React.useState(tabParam && TABS.find(t => t.key === tabParam || t._type === tabParam) ? (TABS.find(t => t.key === tabParam || t._type === tabParam)?.key) : 'accommodations')
   const [modal, setModal] = React.useState(null)
   const [toggling, setToggling] = React.useState(null)
   const [deleting, setDeleting] = React.useState(null)
