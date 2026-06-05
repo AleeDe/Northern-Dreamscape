@@ -183,7 +183,7 @@ export function SanityPackageDetailPage({pkg}) {
             <span>{pkg.difficulty}</span>
             {pkg.rating && <span>★ {pkg.rating} ({pkg.reviewCount} reviews)</span>}
           </div>
-          <BookNowButton serviceName={pkg.title} serviceType="package" serviceSlug={pkg.slug} label="Book This Package" />
+          <BookNowButton serviceName={pkg.title} serviceType="package" serviceSlug={pkg.slug} serviceId={pkg._id} label="Book This Package" />
         </div>
       </section>
 
@@ -485,6 +485,7 @@ export function SanityServiceDetailPage({ item, backHref, backLabel }) {
   const itemName = item.name || item.title || ''
   const itemSlug = item.slug || ''
   const itemType = item._type || 'package'
+  const itemId   = item._id  || ''
 
   const chips = [
     item.type, item.category, item.location?.city, item.location?.region,
@@ -538,7 +539,7 @@ export function SanityServiceDetailPage({ item, backHref, backLabel }) {
             {item.seatingCapacity && <span className="mono" style={{ fontSize: 12 }}>{item.seatingCapacity} seats</span>}
             {item.availability && <span className="mono" style={{ fontSize: 12 }}>{item.availability}</span>}
           </div>
-          <BookNowButton serviceName={itemName} serviceType={itemType} serviceSlug={itemSlug} label="Book Now" />
+          <BookNowButton serviceName={itemName} serviceType={itemType} serviceSlug={itemSlug} serviceId={itemId} label="Book Now" />
         </div>
       </section>
 
@@ -956,7 +957,7 @@ export function SanityServiceDetailPage({ item, backHref, backLabel }) {
         <div className="container">
           <h2 style={{ fontSize: 'clamp(30px, 4vw, 52px)', lineHeight: 1.1, marginBottom: 12, color: 'var(--bone)' }}>Ready to book?</h2>
           <p style={{ fontSize: 17, opacity: 0.88, marginBottom: 28, lineHeight: 1.6 }}>Submit your booking request and our team will confirm within 24 hours.</p>
-          <BookNowButton serviceName={itemName} serviceType={itemType} serviceSlug={itemSlug} label="Book Now — It's Free" className="btn" style={{ background: 'var(--bone)', color: 'var(--ember)', fontSize: 16, padding: '18px 44px' }} />
+          <BookNowButton serviceName={itemName} serviceType={itemType} serviceSlug={itemSlug} serviceId={itemId} label="Book Now — It's Free" className="btn" style={{ background: 'var(--bone)', color: 'var(--ember)', fontSize: 16, padding: '18px 44px' }} />
         </div>
       </section>
       <Footer />

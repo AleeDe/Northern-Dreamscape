@@ -13,7 +13,7 @@ export async function POST(request) {
     const body = await request.json()
 
     const {
-      serviceType, serviceName, serviceSlug,
+      serviceType, serviceName, serviceSlug, serviceId,
       travelDate, returnDate, guests,
       fullName, email, phone, nationality, cnic,
       emergencyName, emergencyPhone,
@@ -32,6 +32,8 @@ export async function POST(request) {
       _type: 'bookingInquiry',
       bookingRef,
       status: 'new',
+      // Sanity reference — links directly to the package/service document
+      ...(serviceId ? { requestedItem: { _type: 'reference', _ref: serviceId } } : {}),
       serviceType: serviceType || 'custom_trip',
       serviceName: serviceName || '',
       serviceSlug: serviceSlug || '',

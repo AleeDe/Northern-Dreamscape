@@ -29,6 +29,19 @@ export const bookingInquiryType = defineType({
 
     // ── What they're booking ──────────────────────────────────────
     defineField({
+      name: 'requestedItem',
+      title: 'Linked Package / Service',
+      description: 'Click to open the actual package or service document',
+      type: 'reference',
+      to: [
+        {type: 'package'},
+        {type: 'accommodation'},
+        {type: 'vehicle'},
+        {type: 'guide'},
+        {type: 'restaurant'},
+      ],
+    }),
+    defineField({
       name: 'serviceType',
       title: 'Service Type',
       type: 'string',
@@ -95,12 +108,15 @@ export const bookingInquiryType = defineType({
       title: 'fullName',
       subtitle: 'serviceName',
       status: 'status',
+      itemTitle: 'requestedItem.title',
+      itemName: 'requestedItem.name',
     },
-    prepare({title, subtitle, status}) {
+    prepare({title, subtitle, status, itemTitle, itemName}) {
       const icons = {new: '🆕', contacted: '📞', quoted: '💬', confirmed: '✅', cancelled: '❌'}
+      const service = itemTitle || itemName || subtitle || 'No service selected'
       return {
         title: `${icons[status] || '🆕'} ${title || 'Unknown'}`,
-        subtitle: subtitle || 'No service selected',
+        subtitle: service,
       }
     },
   },

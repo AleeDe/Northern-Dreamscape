@@ -55,7 +55,7 @@ const inputStyle = {
 }
 
 // ── Main modal ────────────────────────────────────────────────────────────────
-export function BookingModal({ isOpen, onClose, serviceName = '', serviceType = 'package', serviceSlug = '' }) {
+export function BookingModal({ isOpen, onClose, serviceName = '', serviceType = 'package', serviceSlug = '', serviceId = '' }) {
   const [step, setStep] = React.useState(0)
   const [loading, setLoading] = React.useState(false)
   const [bookingRef, setBookingRef] = React.useState(null)
@@ -65,6 +65,7 @@ export function BookingModal({ isOpen, onClose, serviceName = '', serviceType = 
     serviceName: serviceName,
     serviceType: serviceType,
     serviceSlug: serviceSlug,
+    serviceId: serviceId,
     travelDate: '',
     returnDate: '',
     guests: 1,
@@ -82,8 +83,8 @@ export function BookingModal({ isOpen, onClose, serviceName = '', serviceType = 
 
   // Sync serviceName when prop changes
   React.useEffect(() => {
-    setForm(f => ({ ...f, serviceName, serviceType, serviceSlug }))
-  }, [serviceName, serviceType, serviceSlug])
+    setForm(f => ({ ...f, serviceName, serviceType, serviceSlug, serviceId }))
+  }, [serviceName, serviceType, serviceSlug, serviceId])
 
   // Reset on close
   React.useEffect(() => {
@@ -357,22 +358,22 @@ function Row({ label, value, last }) {
 
 // ── Hook for easy use anywhere ────────────────────────────────────────────────
 export function useBooking() {
-  const [state, setState] = React.useState({ open: false, serviceName: '', serviceType: 'package', serviceSlug: '' })
-  const open = ({ serviceName = '', serviceType = 'package', serviceSlug = '' } = {}) =>
-    setState({ open: true, serviceName, serviceType, serviceSlug })
+  const [state, setState] = React.useState({ open: false, serviceName: '', serviceType: 'package', serviceSlug: '', serviceId: '' })
+  const open = ({ serviceName = '', serviceType = 'package', serviceSlug = '', serviceId = '' } = {}) =>
+    setState({ open: true, serviceName, serviceType, serviceSlug, serviceId })
   const close = () => setState(s => ({ ...s, open: false }))
-  return { isOpen: state.open, open, close, serviceName: state.serviceName, serviceType: state.serviceType, serviceSlug: state.serviceSlug }
+  return { isOpen: state.open, open, close, serviceName: state.serviceName, serviceType: state.serviceType, serviceSlug: state.serviceSlug, serviceId: state.serviceId }
 }
 
 // ── Drop-in button that opens the modal — usable from server components ───────
-export function BookNowButton({ serviceName = '', serviceType = 'package', serviceSlug = '', label = 'Book Now', className = 'btn btn-ember', style = {} }) {
+export function BookNowButton({ serviceName = '', serviceType = 'package', serviceSlug = '', serviceId = '', label = 'Book Now', className = 'btn btn-ember', style = {} }) {
   const booking = useBooking()
   return (
     <>
       <button
         className={className}
         style={{ cursor: 'pointer', ...style }}
-        onClick={() => booking.open({ serviceName, serviceType, serviceSlug })}
+        onClick={() => booking.open({ serviceName, serviceType, serviceSlug, serviceId })}
       >
         {label}
       </button>
@@ -382,6 +383,7 @@ export function BookNowButton({ serviceName = '', serviceType = 'package', servi
         serviceName={booking.serviceName}
         serviceType={booking.serviceType}
         serviceSlug={booking.serviceSlug}
+        serviceId={booking.serviceId}
       />
     </>
   )
