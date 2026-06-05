@@ -3,122 +3,101 @@
 import React from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ImageUpload } from '@/components/admin/ImageUpload'
+import {
+  inp, sel, F, Grid, Sec, Tog, TagInput, SeoTab, SettingsTab,
+  GalleryEditor, SlidePanel,
+} from '@/components/admin/EditorShared'
 
-const TABS = [
-  { key: 'accommodations', label: '🏨 Accommodation', _type: 'accommodation' },
-  { key: 'vehicles',       label: '🚙 Vehicles',       _type: 'vehicle'       },
-  { key: 'guides',         label: '🧭 Guides',         _type: 'guide'         },
-  { key: 'restaurants',    label: '🍽️ Restaurants',    _type: 'restaurant'    },
+const TABS_CONFIG = [
+  { key: 'accommodations', label: '🏨 Accommodation', _type: 'accommodation', single: 'Accommodation' },
+  { key: 'vehicles',       label: '🚙 Vehicles',       _type: 'vehicle',       single: 'Vehicle'       },
+  { key: 'guides',         label: '🧭 Guides',         _type: 'guide',         single: 'Guide'         },
+  { key: 'restaurants',    label: '🍽️ Restaurants',    _type: 'restaurant',    single: 'Restaurant'    },
 ]
 const HREF = { accommodations:'/accommodation', vehicles:'/vehicles', guides:'/guides', restaurants:'/restaurants' }
 const STATUS_COLOR = { live:'#27ae60', draft:'#e8822e', hidden:'#999' }
 
-const inp = { width:'100%', padding:'9px 11px', border:'1px solid #ddd', fontSize:13, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }
-const sel = { ...inp, background:'white', cursor:'pointer' }
+const EDITOR_TABS = [
+  { key:'content',  label:'📝 Content'   },
+  { key:'details',  label:'⭐ Details'   },
+  { key:'media',    label:'🖼️ Media'      },
+  { key:'seo',      label:'🔍 SEO & FAQs' },
+  { key:'settings', label:'⚙️ Settings'  },
+]
 
-const F = ({ label, children }) => (
-  <div style={{ marginBottom: 14 }}>
-    <label style={{ display: 'block', fontFamily: 'monospace', fontSize: 10, letterSpacing: '0.1em', color: '#888', marginBottom: 5 }}>{label.toUpperCase()}</label>
-    {children}
-  </div>
-)
-
-function Tog({ label, v, onChange, disabled }) {
-  return (
-    <button onClick={() => onChange(!v)} disabled={disabled} type="button"
-      style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'none', border: 'none', cursor: 'pointer', fontSize: 11, color: v ? '#27ae60' : '#bbb', fontFamily: 'monospace', padding: 0, opacity: disabled ? 0.5 : 1 }}>
-      <span style={{ width: 26, height: 14, borderRadius: 7, background: v ? '#27ae60' : '#ddd', position: 'relative', display: 'inline-block', flexShrink: 0 }}>
-        <span style={{ position: 'absolute', top: 2, left: v ? 13 : 2, width: 10, height: 10, borderRadius: '50%', background: 'white', transition: 'left 0.15s' }} />
-      </span>
-      {label}
-    </button>
-  )
-}
-
-function TagInput({ value, onChange, placeholder }) {
-  const [txt, setTxt] = React.useState('')
-  const tags = Array.isArray(value) ? value : []
-  function add() { const v = txt.trim(); if (v) { onChange([...tags, v]); setTxt('') } }
-  return (
-    <div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
-        {tags.map((t, i) => (
-          <span key={i} style={{ background: '#f0ece6', padding: '3px 8px', fontSize: 12, display: 'flex', alignItems: 'center', gap: 5 }}>
-            {t}
-            <button type="button" onClick={() => onChange(tags.filter((_, j) => j !== i))}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#c0392b', fontSize: 13, lineHeight: 1, padding: 0 }}>×</button>
-          </span>
-        ))}
-      </div>
-      <div style={{ display: 'flex', gap: 8 }}>
-        <input value={txt} onChange={e => setTxt(e.target.value)} onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), add())}
-          placeholder={placeholder} style={{ ...inp, flex: 1 }} />
-        <button type="button" onClick={add} style={{ padding: '9px 12px', background: '#0d1f24', color: 'white', border: 'none', cursor: 'pointer', fontSize: 11 }}>ADD</button>
-      </div>
-    </div>
-  )
-}
-
-function ServiceModal({ item, _type, onClose, onSaved }) {
+function ServicePanel({ item, _type, onClose, onSaved }) {
   const isEdit = !!item?._id
-  const [form, setForm] = React.useState({
-    name: item?.name || '',
-    city: item?.city || '',
-    region: item?.region || '',
-    shortDescription: item?.shortDescription || '',
-    price: item?.price || '',
-    currency: item?.currency || 'PKR',
-    status: item?.status || 'draft',
-    featured: item?.featured || false,
-    // Vehicle
-    seats: item?.seats || '',
-    withDriver: item?.withDriver || false,
-    fuelIncluded: item?.fuelIncluded || false,
-    acAvailable: item?.acAvailable || false,
-    // Guide
-    experienceYears: item?.experienceYears || '',
-    languages: item?.languages || [],
-    availability: item?.availability || '',
-    // Restaurant
-    cuisines: item?.cuisines || [],
-    priceRange: item?.priceRange || '',
-    seatingCapacity: item?.seatingCapacity || '',
-    reservationRequired: item?.reservationRequired || false,
-    // Accommodation
-    checkInTime: item?.checkInTime || '',
-    checkOutTime: item?.checkOutTime || '',
-    // Image
-    heroImage: item?.heroImage?.asset ? { url: item.heroImage.asset.url, id: item.heroImage.asset._id } : null,
-    portrait: item?.portrait?.asset ? { url: item.portrait.asset.url, id: item.portrait.asset._id } : null,
-  })
+  const [tab, setTab] = React.useState('content')
   const [saving, setSaving] = React.useState(false)
   const [error, setError] = React.useState('')
 
-  const set = k => v => setForm(f => ({ ...f, [k]: v }))
-  const setE = k => e => setForm(f => ({ ...f, [k]: e.target.value }))
-  const setC = k => e => setForm(f => ({ ...f, [k]: e.target.checked }))
+  const [form, setForm] = React.useState({
+    name: item?.name || '',
+    city: item?.location?.city || '', region: item?.location?.region || '',
+    shortDescription: item?.shortDescription || '',
+    price: item?.price || '', currency: item?.currency || 'PKR',
+    highlights: item?.highlights || [], included: item?.included || [], excluded: item?.excluded || [],
+    cancellationPolicy: item?.cancellationPolicy || '',
+    // accommodation
+    type: item?.type || '', amenities: item?.amenities || [], houseRules: item?.houseRules || [],
+    checkInTime: item?.checkInTime || '', checkOutTime: item?.checkOutTime || '',
+    // vehicle
+    category: item?.category || '', model: item?.model || '', seats: item?.seats || '', doors: item?.doors || '',
+    luggageCapacity: item?.luggageCapacity || '', routesAllowed: item?.routesAllowed || [],
+    withDriver: item?.withDriver ?? true, fuelIncluded: item?.fuelIncluded ?? false,
+    acAvailable: item?.acAvailable ?? true, insuranceIncluded: item?.insuranceIncluded ?? false,
+    // guide
+    role: item?.role || '', homeRegion: item?.homeRegion || '', languages: item?.languages || [],
+    specialties: item?.specialties || [], experienceYears: item?.experienceYears || '',
+    certifications: item?.certifications || [], totalTours: item?.totalTours || '', availability: item?.availability || '',
+    // restaurant
+    cuisines: item?.cuisines || [], mealTypes: item?.mealTypes || [], priceRange: item?.priceRange || '',
+    seatingCapacity: item?.seatingCapacity || '', reservationRequired: item?.reservationRequired ?? false,
+    dietaryOptions: item?.dietaryOptions || [], menuHighlights: item?.menuHighlights || [], goodFor: item?.goodFor || [],
+    // media
+    heroImage: (item?.heroImage?.asset || item?.portrait?.asset) ? { url: (item.heroImage?.asset || item.portrait?.asset).url, id: (item.heroImage?.asset || item.portrait?.asset)._id } : null,
+    gallery: (item?.gallery || []).map(g => ({ id: g.asset?._id, url: g.asset?.url })),
+    // seo
+    faqs: item?.faqs || [], metaTitle: item?.seo?.metaTitle || '', metaDescription: item?.seo?.metaDescription || '', focusKeywords: item?.seo?.focusKeywords || '',
+    // settings
+    status: item?.status || 'draft', featured: !!item?.featured, bookable: item?.bookable ?? true,
+    rating: item?.rating || '', reviewCount: item?.reviewCount || '',
+  })
+
+  const s = k => e => setForm(f => ({ ...f, [k]: e.target.value }))
+  const t = k => v => setForm(f => ({ ...f, [k]: v }))
 
   async function save(e) {
-    e.preventDefault()
-    if (!form.name) { setError('Name is required'); return }
+    e?.preventDefault()
+    if (!form.name) { setError('Name is required'); setTab('content'); return }
     setSaving(true); setError('')
 
-    const payload = {
-      _type, name: form.name, city: form.city, region: form.region,
-      shortDescription: form.shortDescription, price: form.price,
-      currency: form.currency, status: form.status, featured: form.featured,
-      heroImageId: form.heroImage?.id || null,
-      portraitId: form.portrait?.id || null,
-      ...(_type === 'vehicle' ? { seats: Number(form.seats) || 0, withDriver: form.withDriver, fuelIncluded: form.fuelIncluded, acAvailable: form.acAvailable } : {}),
-      ...(_type === 'guide' ? { experienceYears: Number(form.experienceYears) || 0, languages: form.languages, availability: form.availability } : {}),
-      ...(_type === 'restaurant' ? { cuisines: form.cuisines, priceRange: form.priceRange, seatingCapacity: Number(form.seatingCapacity) || 0, reservationRequired: form.reservationRequired } : {}),
-      ...(_type === 'accommodation' ? { checkInTime: form.checkInTime, checkOutTime: form.checkOutTime } : {}),
+    const common = {
+      name: form.name, city: form.city, region: form.region,
+      shortDescription: form.shortDescription, price: form.price, currency: form.currency,
+      highlights: form.highlights, included: form.included, excluded: form.excluded,
+      cancellationPolicy: form.cancellationPolicy,
+      status: form.status, featured: form.featured, bookable: form.bookable,
+      rating: form.rating ? Number(form.rating) : undefined,
+      reviewCount: form.reviewCount ? Number(form.reviewCount) : undefined,
+      gallery: form.gallery.map(g => ({ _type:'mediaImage', _key:g.id, asset:{ _type:'reference', _ref:g.id } })),
+      faqs: form.faqs,
+      seo: { metaTitle: form.metaTitle, metaDescription: form.metaDescription, focusKeywords: form.focusKeywords },
+      [_type === 'guide' ? 'portraitId' : 'heroImageId']: form.heroImage?.id || null,
     }
+
+    const typeSpecific =
+      _type === 'accommodation' ? { type: form.type, amenities: form.amenities, houseRules: form.houseRules, checkInTime: form.checkInTime, checkOutTime: form.checkOutTime } :
+      _type === 'vehicle' ? { category: form.category, model: form.model, seats: Number(form.seats)||0, doors: Number(form.doors)||undefined, luggageCapacity: form.luggageCapacity, routesAllowed: form.routesAllowed, withDriver: form.withDriver, fuelIncluded: form.fuelIncluded, acAvailable: form.acAvailable, insuranceIncluded: form.insuranceIncluded } :
+      _type === 'guide' ? { role: form.role, homeRegion: form.homeRegion, languages: form.languages, specialties: form.specialties, experienceYears: Number(form.experienceYears)||0, certifications: form.certifications, totalTours: Number(form.totalTours)||undefined, availability: form.availability } :
+      { cuisines: form.cuisines, mealTypes: form.mealTypes, priceRange: form.priceRange, seatingCapacity: Number(form.seatingCapacity)||undefined, reservationRequired: form.reservationRequired, dietaryOptions: form.dietaryOptions, menuHighlights: form.menuHighlights, goodFor: form.goodFor }
+
+    const payload = { ...common, ...typeSpecific }
 
     const res = await fetch('/api/admin/services', {
       method: isEdit ? 'PATCH' : 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(isEdit ? { id: item._id, fields: payload } : payload),
+      body: JSON.stringify(isEdit ? { id: item._id, fields: payload } : { _type, ...payload }),
     })
     const data = await res.json()
     setSaving(false)
@@ -126,114 +105,138 @@ function ServiceModal({ item, _type, onClose, onSaved }) {
     else setError(data.error || 'Save failed')
   }
 
-  const typeLabel = { accommodation:'Accommodation', vehicle:'Vehicle', guide:'Guide', restaurant:'Restaurant' }[_type]
-  const imgKey = _type === 'guide' ? 'portrait' : 'heroImage'
+  const single = TABS_CONFIG.find(t => t._type === _type)?.single
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '20px 16px', overflowY: 'auto' }}>
-      <div style={{ background: 'white', width: '100%', maxWidth: 620, borderRadius: 2, overflow: 'hidden' }}>
-        <div style={{ background: '#0d1f24', padding: '16px 22px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 style={{ margin: 0, color: '#f5efe4', fontSize: 16 }}>{isEdit ? '✏️ Edit' : '➕ New'} {typeLabel}</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#f5efe4', cursor: 'pointer', fontSize: 22 }}>×</button>
+    <SlidePanel title={isEdit ? `✏️ ${item.name}` : `➕ New ${single}`} onClose={onClose} onSave={save} saving={saving}
+      tabs={EDITOR_TABS} activeTab={tab} setTab={setTab} error={error}>
+
+      {tab === 'content' && (
+        <div>
+          <Sec>BASIC INFO</Sec>
+          <Grid>
+            <F label="Name" req><input value={form.name} onChange={s('name')} style={inp} /></F>
+            {_type !== 'guide' && <F label="City" full={false}><input value={form.city} onChange={s('city')} style={inp} placeholder="Gilgit" /></F>}
+            {_type !== 'guide' && <F label="Region" full={false}><input value={form.region} onChange={s('region')} style={inp} placeholder="Gilgit-Baltistan" /></F>}
+            <F label="Price (PKR)" full={false}><input type="number" value={form.price} onChange={s('price')} style={inp} /></F>
+            <F label="Short Description"><textarea value={form.shortDescription} onChange={s('shortDescription')} rows={3} style={{ ...inp, resize:'vertical' }} /></F>
+          </Grid>
+          <Sec>SELLING POINTS</Sec>
+          <F label="Highlights"><TagInput value={form.highlights} onChange={t('highlights')} placeholder="Short selling point" /></F>
+          <F label="What's Included"><TagInput value={form.included} onChange={t('included')} /></F>
+          <F label="What's Excluded"><TagInput value={form.excluded} onChange={t('excluded')} /></F>
+          <F label="Cancellation Policy"><textarea value={form.cancellationPolicy} onChange={s('cancellationPolicy')} rows={2} style={{ ...inp, resize:'vertical' }} /></F>
         </div>
-        <form onSubmit={save} style={{ padding: 22, maxHeight: '80vh', overflowY: 'auto' }}>
-          {error && <div style={{ padding: '10px 14px', background: '#fff0eb', border: '1px solid #fcc', color: '#c0392b', fontSize: 13, marginBottom: 14 }}>{error}</div>}
+      )}
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 14px' }}>
-            <div style={{ gridColumn: '1 / -1' }}>
-              <F label="Name *"><input value={form.name} onChange={setE('name')} style={inp} required /></F>
+      {tab === 'details' && (
+        <div>
+          {_type === 'accommodation' && <>
+            <Sec>HOTEL DETAILS</Sec>
+            <Grid>
+              <F label="Type" full={false}>
+                <select value={form.type} onChange={s('type')} style={sel}>
+                  <option value="">—</option>
+                  {['Hotel','Guesthouse','Lodge','Camp','Heritage stay','Resort'].map(x => <option key={x}>{x}</option>)}
+                </select>
+              </F>
+              <F label="Check-in Time" full={false}><input value={form.checkInTime} onChange={s('checkInTime')} style={inp} placeholder="14:00" /></F>
+              <F label="Check-out Time" full={false}><input value={form.checkOutTime} onChange={s('checkOutTime')} style={inp} placeholder="11:00" /></F>
+            </Grid>
+            <F label="Amenities"><TagInput value={form.amenities} onChange={t('amenities')} placeholder="e.g. WiFi, Heating" /></F>
+            <F label="House Rules"><TagInput value={form.houseRules} onChange={t('houseRules')} /></F>
+          </>}
+
+          {_type === 'vehicle' && <>
+            <Sec>VEHICLE SPECS</Sec>
+            <Grid>
+              <F label="Category" full={false}>
+                <select value={form.category} onChange={s('category')} style={sel}>
+                  <option value="">—</option>
+                  {['Car','4x4 Jeep','SUV','Coaster','Van','Airport pickup','Motorbike'].map(x => <option key={x}>{x}</option>)}
+                </select>
+              </F>
+              <F label="Model" full={false}><input value={form.model} onChange={s('model')} style={inp} placeholder="Toyota Land Cruiser" /></F>
+              <F label="Seats" full={false}><input type="number" value={form.seats} onChange={s('seats')} style={inp} /></F>
+              <F label="Doors" full={false}><input type="number" value={form.doors} onChange={s('doors')} style={inp} /></F>
+              <F label="Luggage Capacity" full={false}><input value={form.luggageCapacity} onChange={s('luggageCapacity')} style={inp} placeholder="4 large bags" /></F>
+            </Grid>
+            <F label="Routes Allowed"><TagInput value={form.routesAllowed} onChange={t('routesAllowed')} placeholder="e.g. Skardu" /></F>
+            <div style={{ display:'flex', gap:24, flexWrap:'wrap', marginTop:8 }}>
+              <Tog label="With Driver" v={form.withDriver} onChange={t('withDriver')} />
+              <Tog label="Fuel Included" v={form.fuelIncluded} onChange={t('fuelIncluded')} />
+              <Tog label="AC Available" v={form.acAvailable} onChange={t('acAvailable')} />
+              <Tog label="Insurance Included" v={form.insuranceIncluded} onChange={t('insuranceIncluded')} />
             </div>
-            {_type !== 'guide' && <F label="City"><input value={form.city} onChange={setE('city')} style={inp} placeholder="Gilgit" /></F>}
-            {_type !== 'guide' && <F label="Region"><input value={form.region} onChange={setE('region')} style={inp} placeholder="Gilgit-Baltistan" /></F>}
-            <F label="Price (PKR)"><input type="number" value={form.price} onChange={setE('price')} style={inp} /></F>
-            <F label="Status">
-              <select value={form.status} onChange={setE('status')} style={sel}>
-                {['draft','live','hidden'].map(s => <option key={s}>{s}</option>)}
-              </select>
-            </F>
-          </div>
+          </>}
 
-          <F label="Short Description">
-            <textarea value={form.shortDescription} onChange={setE('shortDescription')} rows={2} style={{ ...inp, resize: 'vertical' }} />
-          </F>
+          {_type === 'guide' && <>
+            <Sec>GUIDE PROFILE</Sec>
+            <Grid>
+              <F label="Role" full={false}><input value={form.role} onChange={s('role')} style={inp} placeholder="Senior Mountain Guide" /></F>
+              <F label="Home Region" full={false}><input value={form.homeRegion} onChange={s('homeRegion')} style={inp} placeholder="Hunza" /></F>
+              <F label="Experience (Years)" full={false}><input type="number" value={form.experienceYears} onChange={s('experienceYears')} style={inp} /></F>
+              <F label="Total Tours" full={false}><input type="number" value={form.totalTours} onChange={s('totalTours')} style={inp} /></F>
+              <F label="Availability" full={false}><input value={form.availability} onChange={s('availability')} style={inp} placeholder="March – October" /></F>
+            </Grid>
+            <F label="Languages"><TagInput value={form.languages} onChange={t('languages')} placeholder="e.g. English" /></F>
+            <F label="Specialties"><TagInput value={form.specialties} onChange={t('specialties')} placeholder="e.g. High-altitude trekking" /></F>
+            <F label="Certifications"><TagInput value={form.certifications} onChange={t('certifications')} /></F>
+          </>}
 
-          {/* Type-specific fields */}
-          {_type === 'vehicle' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 14px' }}>
-              <F label="Seats"><input type="number" value={form.seats} onChange={setE('seats')} style={inp} /></F>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: 20 }}>
-                {[['withDriver','With Driver'],['fuelIncluded','Fuel Included'],['acAvailable','AC Available']].map(([k,l]) => (
-                  <Tog key={k} label={l} v={form[k]} onChange={set(k)} />
-                ))}
-              </div>
-            </div>
-          )}
+          {_type === 'restaurant' && <>
+            <Sec>RESTAURANT DETAILS</Sec>
+            <Grid>
+              <F label="Price Range" full={false}>
+                <select value={form.priceRange} onChange={s('priceRange')} style={sel}>
+                  <option value="">—</option>
+                  {['Budget','Mid-range','Premium','Custom group menu'].map(x => <option key={x}>{x}</option>)}
+                </select>
+              </F>
+              <F label="Seating Capacity" full={false}><input type="number" value={form.seatingCapacity} onChange={s('seatingCapacity')} style={inp} /></F>
+            </Grid>
+            <F label="Cuisines"><TagInput value={form.cuisines} onChange={t('cuisines')} placeholder="e.g. Balti, Pakistani" /></F>
+            <F label="Meal Types"><TagInput value={form.mealTypes} onChange={t('mealTypes')} placeholder="e.g. Lunch, Dinner" /></F>
+            <F label="Dietary Options"><TagInput value={form.dietaryOptions} onChange={t('dietaryOptions')} placeholder="e.g. Vegetarian, Halal" /></F>
+            <F label="Menu Highlights"><TagInput value={form.menuHighlights} onChange={t('menuHighlights')} /></F>
+            <F label="Good For"><TagInput value={form.goodFor} onChange={t('goodFor')} placeholder="e.g. Groups, Families" /></F>
+            <div style={{ marginTop:8 }}><Tog label="Reservation Required" v={form.reservationRequired} onChange={t('reservationRequired')} /></div>
+          </>}
+        </div>
+      )}
 
-          {_type === 'guide' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 14px' }}>
-              <F label="Experience (Years)"><input type="number" value={form.experienceYears} onChange={setE('experienceYears')} style={inp} /></F>
-              <F label="Availability"><input value={form.availability} onChange={setE('availability')} style={inp} placeholder="Year-round" /></F>
-              <div style={{ gridColumn: '1 / -1' }}>
-                <F label="Languages">
-                  <TagInput value={form.languages} onChange={set('languages')} placeholder="e.g. English" />
-                </F>
-              </div>
-            </div>
-          )}
+      {tab === 'media' && (
+        <div>
+          <Sec>{_type === 'guide' ? 'PORTRAIT' : 'HERO IMAGE'}</Sec>
+          <ImageUpload value={form.heroImage} onChange={v => setForm(f => ({ ...f, heroImage: { url:v.url, id:v._id||v.id } }))} label={_type === 'guide' ? 'Profile Photo' : 'Main Photo'} />
+          <Sec>PHOTO GALLERY</Sec>
+          <GalleryEditor value={form.gallery} onChange={t('gallery')} />
+        </div>
+      )}
 
-          {_type === 'restaurant' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 14px' }}>
-              <F label="Price Range"><input value={form.priceRange} onChange={setE('priceRange')} style={inp} placeholder="Budget / Mid / Fine" /></F>
-              <F label="Seating Capacity"><input type="number" value={form.seatingCapacity} onChange={setE('seatingCapacity')} style={inp} /></F>
-              <div style={{ gridColumn: '1 / -1' }}>
-                <F label="Cuisines">
-                  <TagInput value={form.cuisines} onChange={set('cuisines')} placeholder="e.g. Pakistani" />
-                </F>
-              </div>
-              <div style={{ paddingTop: 4 }}><Tog label="Reservation Required" v={form.reservationRequired} onChange={set('reservationRequired')} /></div>
-            </div>
-          )}
+      {tab === 'seo' && <SeoTab form={form} onChange={nf => setForm(nf)} />}
 
-          {_type === 'accommodation' && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 14px' }}>
-              <F label="Check-in Time"><input value={form.checkInTime} onChange={setE('checkInTime')} style={inp} placeholder="14:00" /></F>
-              <F label="Check-out Time"><input value={form.checkOutTime} onChange={setE('checkOutTime')} style={inp} placeholder="11:00" /></F>
-            </div>
-          )}
-
-          <F label={_type === 'guide' ? 'Profile Photo' : 'Main Photo'}>
-            <ImageUpload
-              value={form[imgKey]}
-              onChange={v => setForm(f => ({ ...f, [imgKey]: { url: v.url, id: v._id || v.id } }))}
-            />
-          </F>
-
-          <div style={{ display: 'flex', gap: 16, marginBottom: 16 }}>
-            <Tog label="Featured" v={form.featured} onChange={set('featured')} />
-          </div>
-
-          <div style={{ display: 'flex', gap: 10, paddingTop: 14, borderTop: '1px solid #f0ece6' }}>
-            <button type="submit" disabled={saving}
-              style={{ flex: 1, padding: '11px', background: '#0d1f24', color: '#f5efe4', border: 'none', cursor: saving ? 'not-allowed' : 'pointer', fontFamily: 'monospace', fontSize: 12, opacity: saving ? 0.7 : 1 }}>
-              {saving ? 'SAVING...' : isEdit ? 'SAVE CHANGES' : `CREATE ${_type.toUpperCase()}`}
-            </button>
-            <button type="button" onClick={onClose}
-              style={{ padding: '11px 18px', border: '1px solid #ddd', background: 'white', cursor: 'pointer', fontFamily: 'monospace', fontSize: 12 }}>
-              CANCEL
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      {tab === 'settings' && <SettingsTab form={form} onChange={nf => setForm(nf)} />}
+    </SlidePanel>
   )
 }
 
 export default function ServicesPage() {
-  const [data, setData] = React.useState({})
-  const [loading, setLoading] = React.useState(true)
+  return (
+    <React.Suspense fallback={<div style={{ padding: 40, textAlign: 'center', color: '#aaa' }}>Loading...</div>}>
+      <ServicesPageInner />
+    </React.Suspense>
+  )
+}
+
+function ServicesPageInner() {
   const searchParams = useSearchParams()
   const tabParam = searchParams.get('tab')
-  const [activeTab, setActiveTab] = React.useState(tabParam && TABS.find(t => t.key === tabParam || t._type === tabParam) ? (TABS.find(t => t.key === tabParam || t._type === tabParam)?.key) : 'accommodations')
+  const initial = TABS_CONFIG.find(t => t.key === tabParam || t._type === tabParam)?.key || 'accommodations'
+
+  const [data, setData] = React.useState({})
+  const [loading, setLoading] = React.useState(true)
+  const [activeTab, setActiveTab] = React.useState(initial)
   const [modal, setModal] = React.useState(null)
   const [toggling, setToggling] = React.useState(null)
   const [deleting, setDeleting] = React.useState(null)
@@ -244,8 +247,7 @@ export default function ServicesPage() {
   async function fetchData() {
     setLoading(true)
     const res = await fetch('/api/admin/services')
-    const d = await res.json()
-    setData(d)
+    setData(await res.json())
     setLoading(false)
   }
 
@@ -254,7 +256,7 @@ export default function ServicesPage() {
     await fetch('/api/admin/services', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, fields: { [field]: value } }) })
     setData(d => {
       const nd = { ...d }
-      Object.keys(nd).forEach(k => { nd[k] = (nd[k] || []).map(i => i._id === id ? { ...i, [field]: value } : i) })
+      Object.keys(nd).forEach(k => { if (Array.isArray(nd[k])) nd[k] = nd[k].map(i => i._id === id ? { ...i, [field]: value } : i) })
       return nd
     })
     setToggling(null)
@@ -266,39 +268,35 @@ export default function ServicesPage() {
     await fetch('/api/admin/services', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
     setData(d => {
       const nd = { ...d }
-      Object.keys(nd).forEach(k => { nd[k] = (nd[k] || []).filter(i => i._id !== id) })
+      Object.keys(nd).forEach(k => { if (Array.isArray(nd[k])) nd[k] = nd[k].filter(i => i._id !== id) })
       return nd
     })
     setDeleting(null)
   }
 
-  const currentType = TABS.find(t => t.key === activeTab)?._type
+  const currentType = TABS_CONFIG.find(t => t.key === activeTab)?._type
+  const currentSingle = TABS_CONFIG.find(t => t.key === activeTab)?.single
   const items = (data[activeTab] || []).filter(i =>
-    !search || (i.name || '').toLowerCase().includes(search.toLowerCase()) || (i.city || '').toLowerCase().includes(search.toLowerCase())
+    !search || (i.name || '').toLowerCase().includes(search.toLowerCase()) || (i.location?.city || '').toLowerCase().includes(search.toLowerCase())
   )
 
   return (
     <div style={{ padding: 'clamp(16px, 4vw, 36px)' }}>
       {modal && (
-        <ServiceModal
-          item={modal === 'new' ? null : modal}
-          _type={currentType}
-          onClose={() => setModal(null)}
-          onSaved={() => { setModal(null); fetchData() }}
-        />
+        <ServicePanel item={modal === 'new' ? null : modal} _type={currentType}
+          onClose={() => setModal(null)} onSaved={() => { setModal(null); fetchData() }} />
       )}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
         <h1 style={{ fontSize: 'clamp(18px, 4vw, 26px)', margin: 0, fontWeight: 700 }}>🏨 Services</h1>
         <button onClick={() => setModal('new')}
           style={{ padding: '10px 20px', background: '#e8822e', color: 'white', border: 'none', cursor: 'pointer', fontFamily: 'monospace', fontSize: 12, letterSpacing: '0.1em' }}>
-          + NEW {currentType?.toUpperCase()}
+          + NEW {currentSingle?.toUpperCase()}
         </button>
       </div>
 
-      {/* Tabs */}
       <div style={{ display: 'flex', gap: 4, marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
-        {TABS.map(t => (
+        {TABS_CONFIG.map(t => (
           <button key={t.key} onClick={() => { setActiveTab(t.key); setSearch('') }}
             style={{ padding: '9px 16px', border: '1px solid', cursor: 'pointer', fontSize: 12, fontFamily: 'monospace', whiteSpace: 'nowrap', flexShrink: 0,
               background: activeTab === t.key ? '#0d1f24' : 'white', color: activeTab === t.key ? '#f5efe4' : '#555', borderColor: activeTab === t.key ? '#0d1f24' : '#ddd' }}>
@@ -315,7 +313,7 @@ export default function ServicesPage() {
       ) : (
         <div style={{ display: 'grid', gap: 8 }}>
           {items.map(item => {
-            const imgUrl = item.portrait?.asset?.url || item.portrait?.url || item.heroImage?.asset?.url || item.heroImage?.url
+            const imgUrl = item.portrait?.asset?.url || item.heroImage?.asset?.url
             return (
               <div key={item._id} style={{ background: 'white', border: '1px solid #e8e4de', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                 <div style={{ width: 52, height: 44, flexShrink: 0, background: '#f0ece6', overflow: 'hidden' }}>
@@ -324,24 +322,16 @@ export default function ServicesPage() {
                 <div style={{ flex: 1, minWidth: 140 }}>
                   <div style={{ fontWeight: 600, fontSize: 13 }}>{item.name}</div>
                   <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>
-                    {[item.city, item.cuisines?.join(', ') || item.languages?.join(', ') || (item.seats && `${item.seats} seats`) || (item.experienceYears && `${item.experienceYears} yrs`), item.price && `PKR ${Number(item.price).toLocaleString()}`].filter(Boolean).join(' · ')}
+                    {[item.location?.city, item.cuisines?.join(', ') || item.languages?.join(', ') || (item.seats && `${item.seats} seats`) || (item.experienceYears && `${item.experienceYears} yrs`), item.price && `PKR ${Number(item.price).toLocaleString()}`].filter(Boolean).join(' · ')}
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: 10, padding: '3px 8px', fontFamily: 'monospace', fontWeight: 700, background: `${STATUS_COLOR[item.status] || '#999'}18`, color: STATUS_COLOR[item.status] || '#999' }}>
-                    {(item.status || 'draft').toUpperCase()}
-                  </span>
-                  <Tog label="Featured" v={item.featured} disabled={toggling === item._id + 'featured'} onChange={v => quickToggle(item._id, 'featured', v)} />
-                  <select value={item.status || 'draft'} onChange={e => quickToggle(item._id, 'status', e.target.value)}
-                    style={{ padding: '5px 6px', border: '1px solid #ddd', fontSize: 10, fontFamily: 'monospace', background: 'white', cursor: 'pointer' }}>
-                    {['draft','live','hidden'].map(s => <option key={s}>{s}</option>)}
-                  </select>
+                  <span style={{ fontSize: 10, padding: '3px 8px', fontFamily: 'monospace', fontWeight: 700, background: `${STATUS_COLOR[item.status] || '#999'}18`, color: STATUS_COLOR[item.status] || '#999' }}>{(item.status || 'draft').toUpperCase()}</span>
+                  <Tog2 label="Featured" v={item.featured} disabled={toggling === item._id + 'featured'} onChange={v => quickToggle(item._id, 'featured', v)} />
                   <button onClick={() => setModal(item)} style={{ padding: '5px 10px', border: '1px solid #2d7a6e', background: 'white', color: '#2d7a6e', cursor: 'pointer', fontSize: 10, fontFamily: 'monospace' }}>EDIT</button>
                   <a href={`${HREF[activeTab]}/${item.slug}`} target="_blank" style={{ fontSize: 10, color: '#888', fontFamily: 'monospace', textDecoration: 'none' }}>VIEW</a>
                   <button onClick={() => deleteItem(item._id, item.name)} disabled={deleting === item._id}
-                    style={{ padding: '5px 10px', border: '1px solid #fcc', background: 'white', color: '#c0392b', cursor: 'pointer', fontSize: 10, fontFamily: 'monospace', opacity: deleting === item._id ? 0.5 : 1 }}>
-                    DEL
-                  </button>
+                    style={{ padding: '5px 10px', border: '1px solid #fcc', background: 'white', color: '#c0392b', cursor: 'pointer', fontSize: 10, fontFamily: 'monospace', opacity: deleting === item._id ? 0.5 : 1 }}>DEL</button>
                 </div>
               </div>
             )
@@ -350,5 +340,17 @@ export default function ServicesPage() {
         </div>
       )}
     </div>
+  )
+}
+
+function Tog2({ label, v, onChange, disabled }) {
+  return (
+    <button onClick={() => onChange(!v)} disabled={disabled}
+      style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'none', border: 'none', cursor: 'pointer', fontSize: 11, color: v ? '#27ae60' : '#bbb', fontFamily: 'monospace', padding: 0, opacity: disabled ? 0.5 : 1 }}>
+      <span style={{ width: 26, height: 14, borderRadius: 7, background: v ? '#27ae60' : '#ddd', position: 'relative', display: 'inline-block', flexShrink: 0 }}>
+        <span style={{ position: 'absolute', top: 2, left: v ? 13 : 2, width: 10, height: 10, borderRadius: '50%', background: 'white', transition: 'left 0.15s' }} />
+      </span>
+      {label}
+    </button>
   )
 }

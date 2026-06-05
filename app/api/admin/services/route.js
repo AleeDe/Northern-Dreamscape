@@ -6,30 +6,38 @@ import { sanityClient } from '@/lib/sanity/client'
 
 const QUERIES = {
   accommodation: `*[_type == "accommodation"] | order(name asc) {
-    _id, _type, name, "slug": slug.current, status, featured, rating, reviewCount,
-    shortDescription, amenities, checkInTime, checkOutTime,
-    "city": location.city, "region": location.region,
-    "price": pricing.priceFrom, "currency": pricing.currency,
-    heroImage { asset->{ _id, url } }
+    _id, _type, name, "slug": slug.current, status, featured, bookable, rating, reviewCount,
+    type, shortDescription, amenities, highlights, included, excluded, cancellationPolicy,
+    houseRules, roomTypes, checkInTime, checkOutTime,
+    location, "price": pricing.priceFrom, "currency": pricing.currency,
+    heroImage { asset->{ _id, url } }, gallery[] { asset->{ _id, url } },
+    faqs, seo { metaTitle, metaDescription, focusKeywords }
   }`,
   vehicle: `*[_type == "vehicle"] | order(name asc) {
-    _id, _type, name, "slug": slug.current, status, featured, rating,
-    shortDescription, seats, withDriver, fuelIncluded, acAvailable,
+    _id, _type, name, "slug": slug.current, status, featured, bookable,
+    category, model, seats, doors, luggageCapacity,
+    withDriver, fuelIncluded, acAvailable, insuranceIncluded, routesAllowed,
+    shortDescription, highlights, included, excluded, cancellationPolicy,
     "price": pricing.priceFrom, "currency": pricing.currency,
-    heroImage { asset->{ _id, url } }
+    heroImage { asset->{ _id, url } }, gallery[] { asset->{ _id, url } },
+    faqs, seo { metaTitle, metaDescription, focusKeywords }
   }`,
   guide: `*[_type == "guide"] | order(name asc) {
-    _id, _type, name, "slug": slug.current, status, featured, rating,
-    shortDescription, experienceYears, totalTours, languages, availability,
+    _id, _type, name, "slug": slug.current, status, featured, bookable, rating, reviewCount,
+    role, homeRegion, languages, specialties, experienceYears, certifications, totalTours, availability,
+    highlights, included, excluded, cancellationPolicy,
     "price": pricing.priceFrom, "currency": pricing.currency,
-    portrait { asset->{ _id, url } }
+    portrait { asset->{ _id, url } }, gallery[] { asset->{ _id, url } },
+    faqs, seo { metaTitle, metaDescription, focusKeywords }
   }`,
   restaurant: `*[_type == "restaurant"] | order(name asc) {
-    _id, _type, name, "slug": slug.current, status, featured, rating,
-    shortDescription, cuisines, priceRange, seatingCapacity, reservationRequired,
-    "city": location.city,
+    _id, _type, name, "slug": slug.current, status, featured, bookable, rating, reviewCount,
+    location, cuisines, mealTypes, priceRange, shortDescription, highlights,
+    seatingCapacity, reservationRequired, dietaryOptions, cancellationPolicy,
+    openingHours, menuHighlights, goodFor,
     "price": pricing.priceFrom, "currency": pricing.currency,
-    heroImage { asset->{ _id, url } }
+    heroImage { asset->{ _id, url } }, gallery[] { asset->{ _id, url } },
+    faqs, seo { metaTitle, metaDescription, focusKeywords }
   }`,
 }
 
@@ -60,24 +68,43 @@ export async function POST(request) {
   if (!session || session.user.role === 'bookings') return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await request.json()
-  const { _type, name, city, region, price, currency, heroImageId, portraitId, ...rest } = body
+  const { _type, name, city, region, price, currency, heroImageId, portraitId, gallery, faqs, seo, rating, reviewCount, ...rest } = body
 
   if (!_type || !name) return NextResponse.json({ error: '_type and name required' }, { status: 400 })
 
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+  const clean = (obj) => Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined))
+
+  const common = clean({
+    shortDescription: rest.shortDescription || '',
+    highlights: rest.highlights || [],
+    included: rest.included || [],
+    excluded: rest.excluded || [],
+    cancellationPolicy: rest.cancellationPolicy || '',
+    status: rest.status || 'draft',
+    featured: rest.featured || false,
+    bookable: rest.bookable ?? true,
+    rating: rating ? Number(rating) : undefined,
+    reviewCount: reviewCount ? Number(reviewCount) : undefined,
+  })
+
+  const typeFields =
+    _type === 'accommodation' ? clean({ type: rest.type, amenities: rest.amenities || [], houseRules: rest.houseRules || [], checkInTime: rest.checkInTime, checkOutTime: rest.checkOutTime }) :
+    _type === 'vehicle' ? clean({ category: rest.category, model: rest.model, seats: Number(rest.seats) || 0, doors: rest.doors ? Number(rest.doors) : undefined, luggageCapacity: rest.luggageCapacity, routesAllowed: rest.routesAllowed || [], withDriver: rest.withDriver, fuelIncluded: rest.fuelIncluded, acAvailable: rest.acAvailable, insuranceIncluded: rest.insuranceIncluded }) :
+    _type === 'guide' ? clean({ role: rest.role, homeRegion: rest.homeRegion, languages: rest.languages || [], specialties: rest.specialties || [], experienceYears: Number(rest.experienceYears) || 0, certifications: rest.certifications || [], totalTours: rest.totalTours ? Number(rest.totalTours) : undefined, availability: rest.availability }) :
+    clean({ cuisines: rest.cuisines || [], mealTypes: rest.mealTypes || [], priceRange: rest.priceRange, seatingCapacity: rest.seatingCapacity ? Number(rest.seatingCapacity) : undefined, reservationRequired: rest.reservationRequired, dietaryOptions: rest.dietaryOptions || [], menuHighlights: rest.menuHighlights || [], goodFor: rest.goodFor || [] })
 
   const doc = {
     _type,
     name,
     slug: { _type: 'slug', current: slug },
-    location: { _type: 'location', city: city || '', region: region || '' },
+    ...(_type !== 'guide' ? { location: { _type: 'location', city: city || '', region: region || '' } } : {}),
     pricing: { _type: 'pricing', currency: currency || 'PKR', priceFrom: Number(price) || 0 },
-    status: rest.status || 'draft',
-    featured: rest.featured || false,
-    shortDescription: rest.shortDescription || '',
-    ...(_type === 'vehicle' ? { seats: Number(rest.seats) || 0, withDriver: rest.withDriver || false } : {}),
-    ...(_type === 'guide' ? { experienceYears: Number(rest.experienceYears) || 0, languages: rest.languages || [] } : {}),
-    ...(_type === 'restaurant' ? { cuisines: rest.cuisines || [], priceRange: rest.priceRange || '' } : {}),
+    ...common,
+    ...typeFields,
+    ...(gallery?.length ? { gallery } : {}),
+    ...(faqs?.length ? { faqs } : {}),
+    ...(seo ? { seo } : {}),
     ...(heroImageId ? { heroImage: { _type: 'mediaImage', asset: { _type: 'reference', _ref: heroImageId } } } : {}),
     ...(portraitId ? { portrait: { _type: 'mediaImage', asset: { _type: 'reference', _ref: portraitId } } } : {}),
   }
@@ -114,12 +141,12 @@ export async function PATCH(request) {
 
   if (fields.heroImageId) {
     fields.heroImage = { _type: 'mediaImage', asset: { _type: 'reference', _ref: fields.heroImageId } }
-    delete fields.heroImageId
   }
+  delete fields.heroImageId
   if (fields.portraitId) {
     fields.portrait = { _type: 'mediaImage', asset: { _type: 'reference', _ref: fields.portraitId } }
-    delete fields.portraitId
   }
+  delete fields.portraitId
 
   await sanityWriteClient.patch(id).set(fields).commit()
   return NextResponse.json({ success: true })
