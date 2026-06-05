@@ -8,8 +8,19 @@ import { sanityClient } from '@/lib/sanity/client'
 
 const QUERIES = {
   destination: `*[_type == "destination"] | order(name asc) {
-    _id, name, "slug": slug.current, tagline, status, featured, bestSeason, elevationRange, summary,
-    heroImage { asset->{ _id, url } }
+    _id, name, "slug": slug.current, tagline, status, featured,
+    bestSeason, elevationRange, climate, travelTime, summary,
+    location,
+    heroImage { asset->{ _id, url } },
+    gallery[] { caption, image { asset->{ _id, url } } },
+    videos[] { title, youtubeUrl, vimeoUrl, caption },
+    "landmarks": landmarks[]->{ _id, name, category },
+    "accommodations": accommodations[]->{ _id, name },
+    "restaurants": restaurants[]->{ _id, name },
+    "guides": guides[]->{ _id, name },
+    "vehicles": vehicles[]->{ _id, name },
+    faqs[] { question, answer },
+    seo { metaTitle, metaDescription, focusKeywords }
   }`,
   landmark: `*[_type == "landmark"] | order(name asc) {
     _id, name, "slug": slug.current, category, description, elevation, mapsLink, status,
@@ -89,10 +100,25 @@ function buildDoc(_type, body) {
 
   switch (_type) {
     case 'destination':
-      return { ...base, name: body.name, slug: slug(body.name), tagline: body.tagline || '', summary: body.summary || '',
-        bestSeason: body.bestSeason || '', elevationRange: body.elevationRange || '', climate: body.climate || '',
-        travelTime: body.travelTime || '', status: body.status || 'draft', featured: !!body.featured,
-        ...(body.heroImageId ? { heroImage: imgRef(body.heroImageId) } : {}) }
+      return {
+        ...base,
+        name: body.name, slug: slug(body.name),
+        tagline: body.tagline || '', summary: body.summary || '',
+        bestSeason: body.bestSeason || '', elevationRange: body.elevationRange || '',
+        climate: body.climate || '', travelTime: body.travelTime || '',
+        status: body.status || 'draft', featured: !!body.featured,
+        ...(body.heroImageId ? { heroImage: imgRef(body.heroImageId) } : {}),
+        ...(body.location ? { location: { _type: 'location', ...body.location } } : {}),
+        ...(body.gallery ? { gallery: body.gallery } : {}),
+        ...(body.videos ? { videos: body.videos } : {}),
+        ...(body.landmarkIds ? { landmarks: body.landmarkIds.map(id => ({ _type: 'reference', _ref: id, _key: id })) } : {}),
+        ...(body.accommodationIds ? { accommodations: body.accommodationIds.map(id => ({ _type: 'reference', _ref: id, _key: id })) } : {}),
+        ...(body.restaurantIds ? { restaurants: body.restaurantIds.map(id => ({ _type: 'reference', _ref: id, _key: id })) } : {}),
+        ...(body.guideIds ? { guides: body.guideIds.map(id => ({ _type: 'reference', _ref: id, _key: id })) } : {}),
+        ...(body.vehicleIds ? { vehicles: body.vehicleIds.map(id => ({ _type: 'reference', _ref: id, _key: id })) } : {}),
+        ...(body.faqs ? { faqs: body.faqs } : {}),
+        ...(body.seo ? { seo: body.seo } : {}),
+      }
 
     case 'landmark':
       return { ...base, name: body.name, slug: slug(body.name), category: body.category || 'other',
@@ -126,11 +152,17 @@ function buildDoc(_type, body) {
 
 function processFields(fields) {
   const out = { ...fields }
-  if (out.heroImageId) { out.heroImage = imgRef(out.heroImageId); delete out.heroImageId }
-  if (out.avatarId)    { out.avatar   = imgRef(out.avatarId);    delete out.avatarId    }
-  if (out.portraitId)  { out.portrait = imgRef(out.portraitId);  delete out.portraitId  }
-  if (out.relatedToId) { out.relatedTo = { _type: 'reference', _ref: out.relatedToId }; delete out.relatedToId }
-  if (out.authorId)    { out.author = { _type: 'reference', _ref: out.authorId }; delete out.authorId }
+  if (out.heroImageId)     { out.heroImage = imgRef(out.heroImageId);  delete out.heroImageId }
+  if (out.avatarId)        { out.avatar    = imgRef(out.avatarId);     delete out.avatarId    }
+  if (out.portraitId)      { out.portrait  = imgRef(out.portraitId);   delete out.portraitId  }
+  if (out.relatedToId)     { out.relatedTo = { _type: 'reference', _ref: out.relatedToId }; delete out.relatedToId }
+  if (out.authorId)        { out.author    = { _type: 'reference', _ref: out.authorId };    delete out.authorId    }
+  if (out.landmarkIds)     { out.landmarks      = out.landmarkIds.map(id => ({ _type:'reference', _ref:id, _key:id }));      delete out.landmarkIds }
+  if (out.accommodationIds){ out.accommodations = out.accommodationIds.map(id => ({ _type:'reference', _ref:id, _key:id })); delete out.accommodationIds }
+  if (out.restaurantIds)   { out.restaurants    = out.restaurantIds.map(id => ({ _type:'reference', _ref:id, _key:id }));    delete out.restaurantIds }
+  if (out.guideIds)        { out.guides         = out.guideIds.map(id => ({ _type:'reference', _ref:id, _key:id }));         delete out.guideIds }
+  if (out.vehicleIds)      { out.vehicles       = out.vehicleIds.map(id => ({ _type:'reference', _ref:id, _key:id }));       delete out.vehicleIds }
+  if (out.location)        { out.location = { _type: 'location', ...out.location } }
   if (out.name && !out.slug) out.slug = { _type: 'slug', current: slugify(out.name) }
   if (out.title && !out.slug) out.slug = { _type: 'slug', current: slugify(out.title) }
   return out

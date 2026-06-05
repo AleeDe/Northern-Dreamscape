@@ -31,7 +31,7 @@ function AdminNav({ open, onClose }) {
   const path = usePathname()
   const role = session?.user?.role
 
-  const links = NAV_LINKS.filter(l => l.roles.includes(role))
+  const links = NAV_LINKS.filter(l => l.divider || l.roles?.includes(role))
 
   return (
     <>
