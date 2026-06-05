@@ -319,9 +319,9 @@ export const NavDark = () => (
       <MoreDropdown dark={true} />
     </div>
     <div className="nav-right">
-      <a className="btn btn-ghost" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" style={{ padding: '10px 18px', fontSize: 13 }}>
-        <Icon name="whatsapp" size={16} /> Plan via WhatsApp
-      </a>
+      <Link href="/contact" className="btn btn-ghost" style={{ padding: '10px 18px', fontSize: 13 }}>
+        Contact Us
+      </Link>
     </div>
   </nav>
 );
@@ -770,9 +770,9 @@ export const NavLight = ({ activePath }) => (
       <MoreDropdown dark={false} />
     </div>
     <div className="nav-right">
-      <a className="btn btn-ink" href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" style={{ padding: '10px 18px', fontSize: 13 }}>
-        <Icon name="whatsapp" size={16} /> Plan via WhatsApp
-      </a>
+      <Link href="/contact" className="btn btn-ink" style={{ padding: '10px 18px', fontSize: 13 }}>
+        Contact Us
+      </Link>
     </div>
   </nav>
 );

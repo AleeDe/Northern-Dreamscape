@@ -83,10 +83,10 @@ export function NdNavLight({ activePath = '' }) {
           <NavDropdown label="More" links={MORE_LINKS} dark={false} />
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer"
+          <Link href="/contact"
             style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--ui)', fontWeight: 600, fontSize: 13, padding: '10px 18px', background: 'var(--ink)', color: 'var(--bone)', textDecoration: 'none', borderRadius: 2 }}>
-            Plan via WhatsApp
-          </a>
+            Contact Us
+          </Link>
         </div>
       </nav>
 

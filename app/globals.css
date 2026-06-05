@@ -37,6 +37,9 @@ body {
 /* Reset within artboards */
 .nd * { box-sizing: border-box; margin: 0; padding: 0; }
 .nd { font-family: var(--ui); color: var(--ink); background: var(--bone); line-height: 1.5; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
+/* Hide scrollbar inside booking modal */
+.booking-modal-inner::-webkit-scrollbar { display: none; }
 .nd img, .nd svg { display: block; max-width: 100%; }
 .nd button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
 .nd a { color: inherit; text-decoration: none; }

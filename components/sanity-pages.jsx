@@ -2,6 +2,7 @@ import Link from 'next/link'
 import {servicesByTypeQuery, featuredServicesQuery} from '@/lib/sanity/queries'
 import {sanityFetch} from '@/lib/sanity/fetch'
 import {NavLight, NavDark, Footer} from '@/components/site'
+import {BookNowButton} from '@/components/booking-modal'
 
 const WHATSAPP = 'https://wa.me/925812458910?text=Hi%20Northern%20Dreamscape%2C%20I%20want%20to%20plan%20a%20trip.'
 const FALLBACK_IMG = 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80&auto=format&fit=crop'
@@ -151,7 +152,7 @@ export function SanityPackageDetailPage({pkg}) {
             <span>{pkg.difficulty}</span>
             <span>{pkg.rating ? `${pkg.rating} · ${pkg.reviewCount} reviews` : 'Reviews coming soon'}</span>
           </div>
-          <a className="btn btn-ember" href={`https://wa.me/925812458910?text=${encodeURIComponent(`Hi Northern Dreamscape, I want to book ${pkg.title}.`)}`} target="_blank" rel="noopener noreferrer">Check dates on WhatsApp</a>
+          <BookNowButton serviceName={pkg.title} serviceType="package" serviceSlug={pkg.slug} label="Book This Package" />
         </div>
       </section>
 
@@ -356,7 +357,9 @@ export function SanityServiceDetailPage({ item, backHref, backLabel }) {
     </div>
   )
 
-  const WHATSAPP_BOOK = `https://wa.me/925812458910?text=${encodeURIComponent(`Hi Northern Dreamscape, I want to book: ${item.name || item.title}.`)}`
+  const itemName = item.name || item.title || ''
+  const itemSlug = item.slug || ''
+  const itemType = item._type || 'package'
 
   const chips = [
     item.type, item.category, item.location?.city, item.location?.region,
@@ -410,7 +413,7 @@ export function SanityServiceDetailPage({ item, backHref, backLabel }) {
             {item.seatingCapacity && <span className="mono" style={{ fontSize: 12 }}>{item.seatingCapacity} seats</span>}
             {item.availability && <span className="mono" style={{ fontSize: 12 }}>{item.availability}</span>}
           </div>
-          <a className="btn btn-ember" href={WHATSAPP_BOOK} target="_blank" rel="noopener noreferrer">Book via WhatsApp</a>
+          <BookNowButton serviceName={itemName} serviceType={itemType} serviceSlug={itemSlug} label="Book Now" />
         </div>
       </section>
 
@@ -746,9 +749,7 @@ export function SanityServiceDetailPage({ item, backHref, backLabel }) {
             )}
 
             {/* CTA */}
-            <a href={WHATSAPP_BOOK} className="btn btn-ember" target="_blank" rel="noopener noreferrer" style={{ textAlign: 'center', padding: '18px 24px', fontSize: 15 }}>
-              Book via WhatsApp
-            </a>
+            <BookNowButton serviceName={itemName} serviceType={itemType} serviceSlug={itemSlug} label="Book Now" style={{ textAlign: 'center', padding: '18px 24px', fontSize: 15, width: '100%', justifyContent: 'center' }} />
             <Link href={backHref} className="mono" style={{ textAlign: 'center', color: 'var(--muted-ink)', fontSize: 12 }}>← Back to {backLabel}</Link>
           </div>
         </div>
@@ -829,10 +830,8 @@ export function SanityServiceDetailPage({ item, backHref, backLabel }) {
       <section style={{ background: 'var(--ember)', color: 'var(--bone)', padding: '64px 56px', textAlign: 'center' }}>
         <div className="container">
           <h2 style={{ fontSize: 'clamp(30px, 4vw, 52px)', lineHeight: 1.1, marginBottom: 12, color: 'var(--bone)' }}>Ready to book?</h2>
-          <p style={{ fontSize: 17, opacity: 0.88, marginBottom: 28, lineHeight: 1.6 }}>Message us on WhatsApp and we'll confirm availability within a few hours.</p>
-          <a href={WHATSAPP_BOOK} className="btn" style={{ background: 'var(--bone)', color: 'var(--ember)', fontSize: 16, padding: '18px 44px' }} target="_blank" rel="noopener noreferrer">
-            WhatsApp us now
-          </a>
+          <p style={{ fontSize: 17, opacity: 0.88, marginBottom: 28, lineHeight: 1.6 }}>Submit your booking request and our team will confirm within 24 hours.</p>
+          <BookNowButton serviceName={itemName} serviceType={itemType} serviceSlug={itemSlug} label="Book Now — It's Free" className="btn" style={{ background: 'var(--bone)', color: 'var(--ember)', fontSize: 16, padding: '18px 44px' }} />
         </div>
       </section>
       <Footer />
@@ -974,9 +973,7 @@ export function SanityHomePage({ data }) {
         <div className="container">
           <div className="eyebrow" style={{ color: 'rgba(255,255,255,0.7)', marginBottom: 20 }}>Ready to go?</div>
           <h2 style={{ fontSize: 'clamp(36px, 4vw, 64px)', lineHeight: 1.05, color: 'var(--bone)', marginBottom: 28 }}>Tell us your dates.<br />We build the route.</h2>
-          <a href={WHATSAPP} className="btn" style={{ background: 'var(--bone)', color: 'var(--ember)', fontSize: 16, padding: '18px 44px' }} target="_blank" rel="noopener noreferrer">
-            WhatsApp us now
-          </a>
+          <BookNowButton serviceName="Custom Trip" serviceType="custom_trip" serviceSlug="" label="Start Your Booking" className="btn" style={{ background: 'var(--bone)', color: 'var(--ember)', fontSize: 16, padding: '18px 44px' }} />
         </div>
       </section>
       <Footer />
