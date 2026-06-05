@@ -68,7 +68,7 @@ export default function UsersPage() {
   )
 
   return (
-    <div style={{ padding: '36px 40px' }}>
+    <div style={{ padding: 'clamp(16px, 4vw, 36px)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
         <h1 style={{ fontSize: 26, margin: 0, fontWeight: 700 }}>👥 Admin Users</h1>
         <button onClick={() => setShowAdd(true)}

@@ -3,69 +3,165 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useSession, signOut } from 'next-auth/react'
-import { SessionProvider } from 'next-auth/react'
+import { useSession, signOut, SessionProvider } from 'next-auth/react'
 
-function AdminNav() {
+const NAV_LINKS = [
+  { href: '/admin',          label: 'Overview',  icon: '🏠', roles: ['admin','editor','bookings'] },
+  { href: '/admin/bookings', label: 'Bookings',  icon: '📋', roles: ['admin','editor','bookings'] },
+  { href: '/admin/packages', label: 'Packages',  icon: '📦', roles: ['admin','editor'] },
+  { href: '/admin/services', label: 'Services',  icon: '🏨', roles: ['admin','editor'] },
+  { href: '/admin/users',    label: 'Users',     icon: '👥', roles: ['admin'] },
+  { href: '/studio',         label: 'Studio',    icon: '⚙️', roles: ['admin'] },
+]
+
+function AdminNav({ open, onClose }) {
   const { data: session } = useSession()
   const path = usePathname()
   const role = session?.user?.role
 
-  const links = [
-    { href: '/admin',          label: '🏠 Overview',  roles: ['admin', 'editor', 'bookings'] },
-    { href: '/admin/bookings', label: '📋 Bookings',  roles: ['admin', 'editor', 'bookings'] },
-    { href: '/admin/packages', label: '📦 Packages',  roles: ['admin', 'editor'] },
-    { href: '/admin/services', label: '🏨 Services',  roles: ['admin', 'editor'] },
-    { href: '/admin/users',    label: '👥 Users',     roles: ['admin'] },
-    { href: '/studio',         label: '⚙️ Studio',    roles: ['admin'] },
-  ].filter(l => l.roles.includes(role))
+  const links = NAV_LINKS.filter(l => l.roles.includes(role))
 
   return (
-    <aside style={{ width: 220, background: '#0d1f24', minHeight: '100vh', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0 }}>
-      <div style={{ padding: '24px 20px', borderBottom: '1px solid rgba(245,239,228,0.1)' }}>
-        <div style={{ fontFamily: 'Georgia, serif', fontSize: 15, color: '#f5efe4', fontWeight: 500 }}>Northern Dreamscape</div>
-        <div style={{ fontFamily: 'monospace', fontSize: 9, color: 'rgba(245,239,228,0.4)', letterSpacing: '0.14em', marginTop: 4 }}>ADMIN PANEL</div>
-      </div>
+    <>
+      {/* Overlay for mobile */}
+      {open && (
+        <div onClick={onClose}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 40, display: 'none' }}
+          className="admin-overlay" />
+      )}
 
-      <nav style={{ flex: 1, padding: '16px 0' }}>
-        {links.map(l => {
-          const active = path === l.href || (l.href !== '/admin' && path.startsWith(l.href))
-          return (
-            <Link key={l.href} href={l.href} style={{
-              display: 'block', padding: '11px 20px', color: active ? '#f5efe4' : 'rgba(245,239,228,0.55)',
-              textDecoration: 'none', fontSize: 13, fontFamily: 'sans-serif',
-              background: active ? 'rgba(255,255,255,0.08)' : 'transparent',
-              borderLeft: active ? '3px solid #e8822e' : '3px solid transparent',
-            }}>
-              {l.label}
-            </Link>
-          )
-        })}
-      </nav>
-
-      <div style={{ padding: '16px 20px', borderTop: '1px solid rgba(245,239,228,0.1)' }}>
-        <div style={{ fontSize: 12, color: 'rgba(245,239,228,0.5)', marginBottom: 4, fontFamily: 'monospace' }}>{session?.user?.name}</div>
-        <div style={{ fontSize: 10, color: 'rgba(245,239,228,0.3)', fontFamily: 'monospace', marginBottom: 12, letterSpacing: '0.1em' }}>
-          {role?.toUpperCase()}
+      <aside className={`admin-sidebar${open ? ' open' : ''}`}>
+        <div style={{ padding: '20px 18px', borderBottom: '1px solid rgba(245,239,228,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <div style={{ fontFamily: 'Georgia, serif', fontSize: 14, color: '#f5efe4', fontWeight: 500 }}>Northern Dreamscape</div>
+            <div style={{ fontFamily: 'monospace', fontSize: 9, color: 'rgba(245,239,228,0.4)', letterSpacing: '0.14em', marginTop: 3 }}>ADMIN PANEL</div>
+          </div>
+          <button onClick={onClose} className="admin-close-btn"
+            style={{ background: 'none', border: 'none', color: 'rgba(245,239,228,0.5)', cursor: 'pointer', fontSize: 20, padding: 4, display: 'none' }}>
+            ✕
+          </button>
         </div>
-        <button onClick={() => signOut({ callbackUrl: '/admin/login' })}
-          style={{ background: 'none', border: '1px solid rgba(245,239,228,0.2)', color: 'rgba(245,239,228,0.55)', cursor: 'pointer', padding: '8px 14px', fontSize: 11, fontFamily: 'monospace', letterSpacing: '0.1em', width: '100%' }}>
-          SIGN OUT
-        </button>
+
+        <nav style={{ flex: 1, padding: '12px 0' }}>
+          {links.map(l => {
+            const active = path === l.href || (l.href !== '/admin' && path.startsWith(l.href))
+            return (
+              <Link key={l.href} href={l.href} onClick={onClose}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  padding: '11px 18px', color: active ? '#f5efe4' : 'rgba(245,239,228,0.55)',
+                  textDecoration: 'none', fontSize: 13,
+                  background: active ? 'rgba(255,255,255,0.08)' : 'transparent',
+                  borderLeft: active ? '3px solid #e8822e' : '3px solid transparent',
+                }}>
+                <span style={{ fontSize: 16 }}>{l.icon}</span>
+                {l.label}
+              </Link>
+            )
+          })}
+        </nav>
+
+        <div style={{ padding: '14px 18px', borderTop: '1px solid rgba(245,239,228,0.1)' }}>
+          <div style={{ fontSize: 12, color: 'rgba(245,239,228,0.6)', marginBottom: 2 }}>{session?.user?.name}</div>
+          <div style={{ fontSize: 10, color: 'rgba(245,239,228,0.3)', fontFamily: 'monospace', marginBottom: 10, letterSpacing: '0.1em' }}>
+            {role?.toUpperCase()}
+          </div>
+          <button onClick={() => signOut({ callbackUrl: '/admin/login' })}
+            style={{ background: 'none', border: '1px solid rgba(245,239,228,0.2)', color: 'rgba(245,239,228,0.55)', cursor: 'pointer', padding: '7px 12px', fontSize: 10, fontFamily: 'monospace', letterSpacing: '0.1em', width: '100%' }}>
+            SIGN OUT
+          </button>
+        </div>
+      </aside>
+    </>
+  )
+}
+
+function AdminShell({ children }) {
+  const path = usePathname()
+  const [sidebarOpen, setSidebarOpen] = React.useState(false)
+  const isLogin = path === '/admin/login'
+
+  if (isLogin) return <>{children}</>
+
+  return (
+    <div style={{ display: 'flex', fontFamily: 'system-ui, sans-serif', minHeight: '100vh' }}>
+      {/* Overlay */}
+      {sidebarOpen && (
+        <div onClick={() => setSidebarOpen(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 40 }}
+          className="admin-overlay" />
+      )}
+
+      <AdminNav open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }} className="admin-main-wrap">
+        {/* Mobile top bar */}
+        <div className="admin-topbar">
+          <button onClick={() => setSidebarOpen(true)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, padding: '4px 8px', color: '#0d1f24' }}>
+            ☰
+          </button>
+          <div style={{ fontFamily: 'Georgia, serif', fontSize: 15, fontWeight: 500 }}>Northern Dreamscape</div>
+          <div style={{ width: 40 }} />
+        </div>
+
+        <main style={{ flex: 1, background: '#f8f6f2' }}>
+          {children}
+        </main>
       </div>
-    </aside>
+    </div>
   )
 }
 
 export default function AdminLayout({ children }) {
   return (
     <SessionProvider>
-      <div style={{ display: 'flex', fontFamily: 'system-ui, sans-serif' }}>
-        <AdminNav />
-        <main style={{ marginLeft: 220, flex: 1, minHeight: '100vh', background: '#f8f6f2' }}>
-          {children}
-        </main>
-      </div>
+      <AdminShell>{children}</AdminShell>
+      <style>{`
+        .admin-sidebar {
+          width: 220px;
+          background: #0d1f24;
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          position: fixed;
+          top: 0;
+          left: 0;
+          z-index: 50;
+          transition: transform 0.25s ease;
+        }
+        .admin-topbar {
+          display: none;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px 16px;
+          background: #0d1f24;
+          color: #f5efe4;
+          position: sticky;
+          top: 0;
+          z-index: 30;
+        }
+        .admin-main-wrap {
+          margin-left: 220px;
+        }
+        @media (max-width: 768px) {
+          .admin-sidebar {
+            transform: translateX(-100%);
+          }
+          .admin-sidebar.open {
+            transform: translateX(0);
+          }
+          .admin-close-btn {
+            display: block !important;
+          }
+          .admin-topbar {
+            display: flex !important;
+          }
+          .admin-main-wrap {
+            margin-left: 0 !important;
+          }
+        }
+      `}</style>
     </SessionProvider>
   )
 }
