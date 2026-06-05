@@ -1,0 +1,3364 @@
+[
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "options": {
+          "source": "title",
+          "maxLength": 96
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "name": "subtitle",
+        "type": "string"
+      },
+      {
+        "rows": 3,
+        "name": "summary",
+        "type": "text"
+      },
+      {
+        "name": "description",
+        "type": "portableContent",
+        "title": "Full description"
+      },
+      {
+        "to": [
+          {
+            "type": "destination"
+          }
+        ],
+        "name": "destination",
+        "type": "reference"
+      },
+      {
+        "name": "region",
+        "type": "string",
+        "title": "Region label"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "min",
+                "constraint": 1
+              }
+            ]
+          }
+        ],
+        "name": "days",
+        "type": "number"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 0
+              }
+            ]
+          }
+        ],
+        "name": "nights",
+        "type": "number"
+      },
+      {
+        "options": {
+          "list": [
+            "Easy",
+            "Moderate",
+            "Strenuous"
+          ]
+        },
+        "name": "difficulty",
+        "type": "string"
+      },
+      {
+        "name": "season",
+        "type": "string"
+      },
+      {
+        "name": "pricing",
+        "type": "pricing"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "heroImage",
+        "type": "mediaImage",
+        "title": "Hero image"
+      },
+      {
+        "of": [
+          {
+            "options": {
+              "hotspot": true
+            },
+            "type": "mediaImage",
+            "title": "Image"
+          }
+        ],
+        "name": "gallery",
+        "type": "array"
+      },
+      {
+        "name": "video",
+        "type": "videoEmbed"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "highlights",
+        "type": "array"
+      },
+      {
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "included",
+        "type": "array"
+      },
+      {
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "excluded",
+        "type": "array"
+      },
+      {
+        "of": [
+          {
+            "type": "itineraryDay",
+            "title": "Itinerary day"
+          }
+        ],
+        "name": "itineraryDays",
+        "type": "array",
+        "title": "Day-by-day itinerary"
+      },
+      {
+        "description": "⚡ Leave empty to auto-use accommodations from the linked Destination above.",
+        "of": [
+          {
+            "to": [
+              {
+                "type": "accommodation"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to accommodation"
+          }
+        ],
+        "name": "accommodations",
+        "type": "array"
+      },
+      {
+        "description": "⚡ Leave empty to auto-use vehicles from the linked Destination above.",
+        "of": [
+          {
+            "to": [
+              {
+                "type": "vehicle"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to vehicles"
+          }
+        ],
+        "name": "vehicles",
+        "type": "array"
+      },
+      {
+        "description": "⚡ Leave empty to auto-use guides from the linked Destination above.",
+        "of": [
+          {
+            "to": [
+              {
+                "type": "guide"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to tour guides"
+          }
+        ],
+        "name": "guides",
+        "type": "array",
+        "title": "Tour Guides"
+      },
+      {
+        "description": "⚡ Leave empty to auto-use restaurants from the linked Destination above.",
+        "of": [
+          {
+            "to": [
+              {
+                "type": "restaurant"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to restaurants"
+          }
+        ],
+        "name": "restaurants",
+        "type": "array"
+      },
+      {
+        "description": "⚡ Leave empty to auto-use landmarks from the linked Destination above.",
+        "of": [
+          {
+            "to": [
+              {
+                "type": "landmark"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to famous places & landmarks"
+          }
+        ],
+        "name": "landmarks",
+        "type": "array",
+        "title": "Famous Places"
+      },
+      {
+        "of": [
+          {
+            "type": "faqItem",
+            "title": "FAQ item"
+          }
+        ],
+        "name": "faqs",
+        "type": "array",
+        "title": "FAQs"
+      },
+      {
+        "options": {
+          "collapsible": true,
+          "collapsed": false
+        },
+        "name": "seo",
+        "type": "seoFields",
+        "title": "SEO"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 0
+              },
+              {
+                "flag": "max",
+                "constraint": 5
+              }
+            ]
+          }
+        ],
+        "name": "rating",
+        "type": "number"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 0
+              }
+            ]
+          }
+        ],
+        "name": "reviewCount",
+        "type": "number",
+        "title": "Review count"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 0
+              }
+            ]
+          }
+        ],
+        "name": "spotsLeft",
+        "type": "number",
+        "title": "Seats left"
+      },
+      {
+        "initialValue": false,
+        "name": "featured",
+        "type": "boolean"
+      },
+      {
+        "initialValue": false,
+        "name": "showOnHome",
+        "type": "boolean",
+        "title": "Show on homepage"
+      },
+      {
+        "initialValue": 100,
+        "name": "priority",
+        "type": "number",
+        "title": "Display priority"
+      },
+      {
+        "initialValue": "draft",
+        "options": {
+          "list": [
+            "draft",
+            "live",
+            "hidden"
+          ]
+        },
+        "name": "status",
+        "type": "string"
+      }
+    ],
+    "name": "package",
+    "type": "document",
+    "title": "Packages"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "name",
+        "type": "string",
+        "title": "Place Name"
+      },
+      {
+        "options": {
+          "source": "name",
+          "maxLength": 96
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "options": {
+          "list": [
+            {
+              "title": "⛰️  Mountain / Peak",
+              "value": "mountain"
+            },
+            {
+              "title": "🏞️  Lake / River",
+              "value": "lake"
+            },
+            {
+              "title": "🌄  Valley",
+              "value": "valley"
+            },
+            {
+              "title": "🏯  Fort / Historical",
+              "value": "fort"
+            },
+            {
+              "title": "🏘️  Village",
+              "value": "village"
+            },
+            {
+              "title": "🛤️  Pass / Route",
+              "value": "pass"
+            },
+            {
+              "title": "🧊  Glacier",
+              "value": "glacier"
+            },
+            {
+              "title": "🌿  Park / Reserve",
+              "value": "park"
+            },
+            {
+              "title": "📍  Other",
+              "value": "other"
+            }
+          ]
+        },
+        "name": "category",
+        "type": "string"
+      },
+      {
+        "rows": 4,
+        "name": "description",
+        "type": "text"
+      },
+      {
+        "name": "elevation",
+        "type": "number",
+        "title": "Elevation (metres)"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "uri",
+                "constraint": {
+                  "options": {
+                    "scheme": [
+                      "/^http$/",
+                      "/^https$/"
+                    ],
+                    "allowRelative": false,
+                    "relativeOnly": false,
+                    "allowCredentials": false
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "name": "mapsLink",
+        "type": "url",
+        "title": "Google Maps Link"
+      },
+      {
+        "name": "bestTimeToVisit",
+        "type": "string",
+        "title": "Best Time to Visit"
+      },
+      {
+        "rows": 2,
+        "name": "travelTip",
+        "type": "text"
+      },
+      {
+        "description": "Which destination(s) this place is part of",
+        "of": [
+          {
+            "to": [
+              {
+                "type": "destination"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to destinations"
+          }
+        ],
+        "name": "destinations",
+        "type": "array"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "heroImage",
+        "type": "mediaImage",
+        "title": "Main Photo"
+      },
+      {
+        "of": [
+          {
+            "options": {
+              "hotspot": true
+            },
+            "type": "mediaImage",
+            "title": "Image"
+          }
+        ],
+        "name": "gallery",
+        "type": "array",
+        "title": "Photo Gallery"
+      },
+      {
+        "initialValue": "live",
+        "options": {
+          "list": [
+            "draft",
+            "live",
+            "hidden"
+          ]
+        },
+        "name": "status",
+        "type": "string"
+      }
+    ],
+    "name": "landmark",
+    "type": "document",
+    "title": "Famous Places & Landmarks"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "options": {
+          "source": "name",
+          "maxLength": 96
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "options": {
+          "list": [
+            "Hotel",
+            "Guesthouse",
+            "Lodge",
+            "Camp",
+            "Heritage stay",
+            "Resort"
+          ]
+        },
+        "name": "type",
+        "type": "string"
+      },
+      {
+        "name": "location",
+        "type": "location"
+      },
+      {
+        "rows": 3,
+        "name": "shortDescription",
+        "type": "text",
+        "title": "Short description"
+      },
+      {
+        "name": "description",
+        "type": "portableContent",
+        "title": "Full description"
+      },
+      {
+        "name": "pricing",
+        "type": "pricing"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "heroImage",
+        "type": "mediaImage",
+        "title": "Hero image"
+      },
+      {
+        "of": [
+          {
+            "options": {
+              "hotspot": true
+            },
+            "type": "mediaImage",
+            "title": "Image"
+          }
+        ],
+        "name": "gallery",
+        "type": "array"
+      },
+      {
+        "name": "video",
+        "type": "videoEmbed"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "amenities",
+        "type": "array"
+      },
+      {
+        "description": "4–6 short selling points shown prominently on the detail page.",
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "highlights",
+        "type": "array",
+        "title": "Highlights (trust bullets)"
+      },
+      {
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "included",
+        "type": "array",
+        "title": "What is included"
+      },
+      {
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "excluded",
+        "type": "array",
+        "title": "What is NOT included"
+      },
+      {
+        "rows": 3,
+        "name": "cancellationPolicy",
+        "type": "text",
+        "title": "Cancellation policy"
+      },
+      {
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "houseRules",
+        "type": "array",
+        "title": "House rules"
+      },
+      {
+        "of": [
+          {
+            "type": "roomType",
+            "title": "Room type"
+          }
+        ],
+        "name": "roomTypes",
+        "type": "array",
+        "title": "Room types"
+      },
+      {
+        "name": "checkInTime",
+        "type": "string",
+        "title": "Check-in time"
+      },
+      {
+        "name": "checkOutTime",
+        "type": "string",
+        "title": "Check-out time"
+      },
+      {
+        "of": [
+          {
+            "type": "faqItem",
+            "title": "FAQ item"
+          }
+        ],
+        "name": "faqs",
+        "type": "array",
+        "title": "FAQs"
+      },
+      {
+        "options": {
+          "collapsible": true,
+          "collapsed": false
+        },
+        "name": "seo",
+        "type": "seoFields",
+        "title": "SEO"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 0
+              },
+              {
+                "flag": "max",
+                "constraint": 5
+              }
+            ]
+          }
+        ],
+        "name": "rating",
+        "type": "number"
+      },
+      {
+        "name": "reviewCount",
+        "type": "number",
+        "title": "Review count"
+      },
+      {
+        "initialValue": false,
+        "name": "featured",
+        "type": "boolean"
+      },
+      {
+        "initialValue": true,
+        "name": "bookable",
+        "type": "boolean",
+        "title": "Bookable separately"
+      },
+      {
+        "initialValue": "draft",
+        "options": {
+          "list": [
+            "draft",
+            "live",
+            "hidden"
+          ]
+        },
+        "name": "status",
+        "type": "string"
+      }
+    ],
+    "name": "accommodation",
+    "type": "document"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "options": {
+          "source": "name",
+          "maxLength": 96
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "options": {
+          "list": [
+            "Car",
+            "4x4 Jeep",
+            "SUV",
+            "Coaster",
+            "Van",
+            "Airport pickup",
+            "Motorbike"
+          ]
+        },
+        "name": "category",
+        "type": "string"
+      },
+      {
+        "name": "model",
+        "type": "string"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 1
+              }
+            ]
+          }
+        ],
+        "name": "seats",
+        "type": "number"
+      },
+      {
+        "name": "doors",
+        "type": "number"
+      },
+      {
+        "name": "luggageCapacity",
+        "type": "string",
+        "title": "Luggage capacity"
+      },
+      {
+        "initialValue": true,
+        "name": "withDriver",
+        "type": "boolean",
+        "title": "Includes driver"
+      },
+      {
+        "initialValue": false,
+        "name": "fuelIncluded",
+        "type": "boolean",
+        "title": "Fuel included"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "routesAllowed",
+        "type": "array",
+        "title": "Routes allowed"
+      },
+      {
+        "name": "pricing",
+        "type": "pricing"
+      },
+      {
+        "rows": 3,
+        "name": "shortDescription",
+        "type": "text",
+        "title": "Short description"
+      },
+      {
+        "description": "4–6 short selling points shown on the detail page.",
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "highlights",
+        "type": "array",
+        "title": "Highlights (trust bullets)"
+      },
+      {
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "included",
+        "type": "array",
+        "title": "What is included"
+      },
+      {
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "excluded",
+        "type": "array",
+        "title": "What is NOT included"
+      },
+      {
+        "rows": 3,
+        "name": "cancellationPolicy",
+        "type": "text",
+        "title": "Cancellation policy"
+      },
+      {
+        "initialValue": true,
+        "name": "acAvailable",
+        "type": "boolean",
+        "title": "Air conditioning"
+      },
+      {
+        "initialValue": false,
+        "name": "insuranceIncluded",
+        "type": "boolean",
+        "title": "Insurance included"
+      },
+      {
+        "of": [
+          {
+            "type": "serviceFeature",
+            "title": "Feature"
+          }
+        ],
+        "name": "features",
+        "type": "array"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "heroImage",
+        "type": "mediaImage",
+        "title": "Hero image"
+      },
+      {
+        "of": [
+          {
+            "options": {
+              "hotspot": true
+            },
+            "type": "mediaImage",
+            "title": "Image"
+          }
+        ],
+        "name": "gallery",
+        "type": "array"
+      },
+      {
+        "of": [
+          {
+            "type": "faqItem",
+            "title": "FAQ item"
+          }
+        ],
+        "name": "faqs",
+        "type": "array",
+        "title": "FAQs"
+      },
+      {
+        "options": {
+          "collapsible": true,
+          "collapsed": false
+        },
+        "name": "seo",
+        "type": "seoFields",
+        "title": "SEO"
+      },
+      {
+        "initialValue": false,
+        "name": "featured",
+        "type": "boolean"
+      },
+      {
+        "initialValue": true,
+        "name": "bookable",
+        "type": "boolean",
+        "title": "Bookable separately"
+      },
+      {
+        "initialValue": "draft",
+        "options": {
+          "list": [
+            "draft",
+            "live",
+            "hidden"
+          ]
+        },
+        "name": "status",
+        "type": "string"
+      }
+    ],
+    "name": "vehicle",
+    "type": "document",
+    "title": "Vehicles"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "options": {
+          "source": "name",
+          "maxLength": 96
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "name": "role",
+        "type": "string"
+      },
+      {
+        "name": "homeRegion",
+        "type": "string",
+        "title": "Home region"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "languages",
+        "type": "array"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "specialties",
+        "type": "array"
+      },
+      {
+        "name": "experienceYears",
+        "type": "number",
+        "title": "Years of experience"
+      },
+      {
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "certifications",
+        "type": "array"
+      },
+      {
+        "name": "totalTours",
+        "type": "number",
+        "title": "Total tours completed"
+      },
+      {
+        "description": "e.g. March – October",
+        "name": "availability",
+        "type": "string",
+        "title": "Availability window"
+      },
+      {
+        "description": "4–6 short selling points.",
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "highlights",
+        "type": "array",
+        "title": "Highlights (trust bullets)"
+      },
+      {
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "included",
+        "type": "array",
+        "title": "What is included in day rate"
+      },
+      {
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "excluded",
+        "type": "array",
+        "title": "What is NOT included"
+      },
+      {
+        "rows": 3,
+        "name": "cancellationPolicy",
+        "type": "text",
+        "title": "Cancellation policy"
+      },
+      {
+        "name": "pricing",
+        "type": "pricing"
+      },
+      {
+        "name": "bio",
+        "type": "portableContent"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "portrait",
+        "type": "mediaImage"
+      },
+      {
+        "of": [
+          {
+            "options": {
+              "hotspot": true
+            },
+            "type": "mediaImage",
+            "title": "Image"
+          }
+        ],
+        "name": "gallery",
+        "type": "array"
+      },
+      {
+        "name": "video",
+        "type": "videoEmbed",
+        "title": "Intro video"
+      },
+      {
+        "of": [
+          {
+            "type": "faqItem",
+            "title": "FAQ item"
+          }
+        ],
+        "name": "faqs",
+        "type": "array",
+        "title": "FAQs"
+      },
+      {
+        "options": {
+          "collapsible": true,
+          "collapsed": false
+        },
+        "name": "seo",
+        "type": "seoFields",
+        "title": "SEO"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 0
+              },
+              {
+                "flag": "max",
+                "constraint": 5
+              }
+            ]
+          }
+        ],
+        "name": "rating",
+        "type": "number"
+      },
+      {
+        "name": "reviewCount",
+        "type": "number",
+        "title": "Review count"
+      },
+      {
+        "initialValue": false,
+        "name": "featured",
+        "type": "boolean"
+      },
+      {
+        "initialValue": true,
+        "name": "bookable",
+        "type": "boolean",
+        "title": "Bookable separately"
+      },
+      {
+        "initialValue": "draft",
+        "options": {
+          "list": [
+            "draft",
+            "live",
+            "hidden"
+          ]
+        },
+        "name": "status",
+        "type": "string"
+      }
+    ],
+    "name": "guide",
+    "type": "document",
+    "title": "Tour guides"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "options": {
+          "source": "name",
+          "maxLength": 96
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "name": "location",
+        "type": "location"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "validation": [
+          {
+            "level": "warning",
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 1
+              }
+            ],
+            "message": "Cuisine helps filtering and SEO."
+          }
+        ],
+        "description": "Examples: Balti, Pakistani, Continental, BBQ, Chinese, Hunza local, Vegetarian.",
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "cuisines",
+        "type": "array"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "mealTypes",
+        "type": "array",
+        "title": "Meal types"
+      },
+      {
+        "options": {
+          "list": [
+            "Budget",
+            "Mid-range",
+            "Premium",
+            "Custom group menu"
+          ]
+        },
+        "name": "priceRange",
+        "type": "string",
+        "title": "Price range"
+      },
+      {
+        "name": "pricing",
+        "type": "pricing",
+        "title": "Group meal pricing"
+      },
+      {
+        "rows": 3,
+        "name": "shortDescription",
+        "type": "text",
+        "title": "Short description"
+      },
+      {
+        "description": "4–6 short selling points shown on detail page.",
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "highlights",
+        "type": "array",
+        "title": "Highlights (trust bullets)"
+      },
+      {
+        "name": "seatingCapacity",
+        "type": "number",
+        "title": "Seating capacity"
+      },
+      {
+        "initialValue": false,
+        "name": "reservationRequired",
+        "type": "boolean",
+        "title": "Reservation required"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "description": "e.g. Vegetarian, Halal, Gluten-free",
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "dietaryOptions",
+        "type": "array",
+        "title": "Dietary options"
+      },
+      {
+        "rows": 2,
+        "name": "cancellationPolicy",
+        "type": "text",
+        "title": "Group booking cancellation policy"
+      },
+      {
+        "name": "description",
+        "type": "portableContent",
+        "title": "Full description"
+      },
+      {
+        "of": [
+          {
+            "type": "openingHours",
+            "title": "Opening hours"
+          }
+        ],
+        "name": "openingHours",
+        "type": "array",
+        "title": "Opening hours"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "heroImage",
+        "type": "mediaImage",
+        "title": "Hero image"
+      },
+      {
+        "of": [
+          {
+            "options": {
+              "hotspot": true
+            },
+            "type": "mediaImage",
+            "title": "Image"
+          }
+        ],
+        "name": "gallery",
+        "type": "array"
+      },
+      {
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "menuHighlights",
+        "type": "array",
+        "title": "Menu highlights"
+      },
+      {
+        "of": [
+          {
+            "options": {
+              "hotspot": true
+            },
+            "type": "mediaImage",
+            "title": "Image"
+          }
+        ],
+        "name": "menuImages",
+        "type": "array",
+        "title": "Menu images"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "goodFor",
+        "type": "array",
+        "title": "Good for"
+      },
+      {
+        "of": [
+          {
+            "type": "faqItem",
+            "title": "FAQ item"
+          }
+        ],
+        "name": "faqs",
+        "type": "array",
+        "title": "FAQs"
+      },
+      {
+        "options": {
+          "collapsible": true,
+          "collapsed": false
+        },
+        "name": "seo",
+        "type": "seoFields",
+        "title": "SEO"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 0
+              },
+              {
+                "flag": "max",
+                "constraint": 5
+              }
+            ]
+          }
+        ],
+        "name": "rating",
+        "type": "number"
+      },
+      {
+        "name": "reviewCount",
+        "type": "number",
+        "title": "Review count"
+      },
+      {
+        "initialValue": false,
+        "name": "featured",
+        "type": "boolean"
+      },
+      {
+        "initialValue": true,
+        "name": "bookable",
+        "type": "boolean",
+        "title": "Bookable for groups"
+      },
+      {
+        "initialValue": "draft",
+        "options": {
+          "list": [
+            "draft",
+            "live",
+            "hidden"
+          ]
+        },
+        "name": "status",
+        "type": "string"
+      }
+    ],
+    "name": "restaurant",
+    "type": "document",
+    "title": "Restaurants"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "options": {
+          "source": "name",
+          "maxLength": 96
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "name": "tagline",
+        "type": "string"
+      },
+      {
+        "rows": 4,
+        "name": "summary",
+        "type": "text"
+      },
+      {
+        "name": "content",
+        "type": "portableContent",
+        "title": "Rich Content"
+      },
+      {
+        "name": "location",
+        "type": "location"
+      },
+      {
+        "name": "bestSeason",
+        "type": "string"
+      },
+      {
+        "name": "elevationRange",
+        "type": "string"
+      },
+      {
+        "name": "climate",
+        "type": "string"
+      },
+      {
+        "name": "travelTime",
+        "type": "string",
+        "title": "Travel Time from Islamabad"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "heroImage",
+        "type": "mediaImage"
+      },
+      {
+        "of": [
+          {
+            "fields": [
+              {
+                "options": {
+                  "hotspot": true
+                },
+                "name": "image",
+                "type": "mediaImage"
+              },
+              {
+                "name": "caption",
+                "type": "string"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "gallery",
+        "type": "array",
+        "title": "Photo Gallery"
+      },
+      {
+        "of": [
+          {
+            "fields": [
+              {
+                "name": "title",
+                "type": "string",
+                "title": "Video Title"
+              },
+              {
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "uri",
+                        "constraint": {
+                          "options": {
+                            "scheme": [
+                              "/^http$/",
+                              "/^https$/"
+                            ],
+                            "allowRelative": false,
+                            "relativeOnly": false,
+                            "allowCredentials": false
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "name": "youtubeUrl",
+                "type": "url",
+                "title": "YouTube URL"
+              },
+              {
+                "validation": [
+                  {
+                    "level": "error",
+                    "rules": [
+                      {
+                        "flag": "uri",
+                        "constraint": {
+                          "options": {
+                            "scheme": [
+                              "/^http$/",
+                              "/^https$/"
+                            ],
+                            "allowRelative": false,
+                            "relativeOnly": false,
+                            "allowCredentials": false
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "name": "vimeoUrl",
+                "type": "url",
+                "title": "Vimeo URL"
+              },
+              {
+                "name": "caption",
+                "type": "string"
+              }
+            ],
+            "type": "object"
+          }
+        ],
+        "name": "videos",
+        "type": "array"
+      },
+      {
+        "description": "Add landmarks from the Landmarks library. Create new ones in Famous Places & Landmarks section.",
+        "of": [
+          {
+            "to": [
+              {
+                "type": "landmark"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to famous places & landmarks"
+          }
+        ],
+        "name": "landmarks",
+        "type": "array",
+        "title": "Famous Places & Landmarks"
+      },
+      {
+        "of": [
+          {
+            "to": [
+              {
+                "type": "accommodation"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to accommodation"
+          }
+        ],
+        "name": "accommodations",
+        "type": "array",
+        "title": "Accommodations in this Destination"
+      },
+      {
+        "of": [
+          {
+            "to": [
+              {
+                "type": "restaurant"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to restaurants"
+          }
+        ],
+        "name": "restaurants",
+        "type": "array",
+        "title": "Restaurants in this Destination"
+      },
+      {
+        "of": [
+          {
+            "to": [
+              {
+                "type": "guide"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to tour guides"
+          }
+        ],
+        "name": "guides",
+        "type": "array",
+        "title": "Tour Guides for this Destination"
+      },
+      {
+        "of": [
+          {
+            "to": [
+              {
+                "type": "vehicle"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to vehicles"
+          }
+        ],
+        "name": "vehicles",
+        "type": "array",
+        "title": "Vehicles available here"
+      },
+      {
+        "of": [
+          {
+            "type": "faqItem",
+            "title": "FAQ item"
+          }
+        ],
+        "name": "faqs",
+        "type": "array",
+        "title": "FAQs"
+      },
+      {
+        "options": {
+          "collapsible": true,
+          "collapsed": false
+        },
+        "name": "seo",
+        "type": "seoFields",
+        "title": "SEO"
+      },
+      {
+        "initialValue": false,
+        "name": "featured",
+        "type": "boolean",
+        "title": "Featured on Homepage"
+      },
+      {
+        "initialValue": "draft",
+        "options": {
+          "list": [
+            "draft",
+            "live",
+            "hidden"
+          ]
+        },
+        "name": "status",
+        "type": "string"
+      }
+    ],
+    "name": "destination",
+    "type": "document",
+    "title": "Destinations"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "options": {
+          "source": "title",
+          "maxLength": 96
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "rows": 3,
+        "name": "excerpt",
+        "type": "text"
+      },
+      {
+        "options": {
+          "list": [
+            "Guide",
+            "Practical",
+            "Story",
+            "Destination",
+            "Safety",
+            "Food",
+            "Packing",
+            "News"
+          ]
+        },
+        "name": "category",
+        "type": "string"
+      },
+      {
+        "to": [
+          {
+            "type": "author"
+          },
+          {
+            "type": "guide"
+          }
+        ],
+        "name": "author",
+        "type": "reference"
+      },
+      {
+        "name": "publishedAt",
+        "type": "datetime",
+        "title": "Published at"
+      },
+      {
+        "name": "updatedAt",
+        "type": "datetime",
+        "title": "Updated at"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "heroImage",
+        "type": "mediaImage",
+        "title": "Hero image"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "content",
+        "type": "portableContent",
+        "title": "Article body"
+      },
+      {
+        "of": [
+          {
+            "to": [
+              {
+                "type": "destination"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to destinations"
+          }
+        ],
+        "name": "relatedDestinations",
+        "type": "array",
+        "title": "Related destinations"
+      },
+      {
+        "of": [
+          {
+            "to": [
+              {
+                "type": "package"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to packages"
+          }
+        ],
+        "name": "relatedPackages",
+        "type": "array",
+        "title": "Related packages"
+      },
+      {
+        "of": [
+          {
+            "to": [
+              {
+                "type": "accommodation"
+              },
+              {
+                "type": "vehicle"
+              },
+              {
+                "type": "guide"
+              },
+              {
+                "type": "restaurant"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to accommodation, vehicles, tour guides or restaurants"
+          }
+        ],
+        "name": "relatedServices",
+        "type": "array",
+        "title": "Related services"
+      },
+      {
+        "of": [
+          {
+            "type": "faqItem",
+            "title": "FAQ item"
+          }
+        ],
+        "name": "faqs",
+        "type": "array",
+        "title": "Article FAQs"
+      },
+      {
+        "options": {
+          "collapsible": true,
+          "collapsed": false
+        },
+        "name": "seo",
+        "type": "seoFields",
+        "title": "SEO"
+      },
+      {
+        "initialValue": false,
+        "name": "featured",
+        "type": "boolean"
+      },
+      {
+        "initialValue": "draft",
+        "options": {
+          "list": [
+            "draft",
+            "live",
+            "hidden"
+          ]
+        },
+        "name": "status",
+        "type": "string"
+      }
+    ],
+    "name": "blogPost",
+    "type": "document",
+    "title": "Blog posts"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "options": {
+          "source": "name",
+          "maxLength": 96
+        },
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "custom"
+              },
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "slug",
+        "type": "slug"
+      },
+      {
+        "name": "role",
+        "type": "string"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "avatar",
+        "type": "mediaImage"
+      },
+      {
+        "rows": 4,
+        "name": "bio",
+        "type": "text"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "expertise",
+        "type": "array"
+      },
+      {
+        "of": [
+          {
+            "validation": [
+              {
+                "level": "error",
+                "rules": [
+                  {
+                    "flag": "uri",
+                    "constraint": {
+                      "options": {
+                        "scheme": [
+                          "/^http$/",
+                          "/^https$/"
+                        ],
+                        "allowRelative": false,
+                        "relativeOnly": false,
+                        "allowCredentials": false
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "type": "url"
+          }
+        ],
+        "name": "sameAs",
+        "type": "array",
+        "title": "Profile links"
+      }
+    ],
+    "name": "author",
+    "type": "document",
+    "title": "Authors"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "reviewerName",
+        "type": "string",
+        "title": "Reviewer name"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "min",
+                "constraint": 1
+              },
+              {
+                "flag": "max",
+                "constraint": 5
+              }
+            ]
+          }
+        ],
+        "name": "rating",
+        "type": "number"
+      },
+      {
+        "rows": 5,
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "reviewText",
+        "type": "text",
+        "title": "Review text"
+      },
+      {
+        "name": "reviewDate",
+        "type": "date",
+        "title": "Review date"
+      },
+      {
+        "initialValue": false,
+        "name": "verified",
+        "type": "boolean",
+        "title": "Verified booking"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "photo",
+        "type": "mediaImage",
+        "title": "Reviewer photo / trip image"
+      },
+      {
+        "to": [
+          {
+            "type": "package"
+          },
+          {
+            "type": "accommodation"
+          },
+          {
+            "type": "vehicle"
+          },
+          {
+            "type": "guide"
+          },
+          {
+            "type": "restaurant"
+          }
+        ],
+        "name": "relatedTo",
+        "type": "reference",
+        "title": "Related item"
+      }
+    ],
+    "name": "review",
+    "type": "document",
+    "title": "Reviews"
+  },
+  {
+    "fields": [
+      {
+        "readOnly": true,
+        "name": "bookingRef",
+        "type": "string",
+        "title": "Booking Reference"
+      },
+      {
+        "initialValue": "new",
+        "options": {
+          "list": [
+            {
+              "title": "🆕 New",
+              "value": "new"
+            },
+            {
+              "title": "📞 Contacted",
+              "value": "contacted"
+            },
+            {
+              "title": "💬 Quoted",
+              "value": "quoted"
+            },
+            {
+              "title": "✅ Confirmed",
+              "value": "confirmed"
+            },
+            {
+              "title": "❌ Cancelled",
+              "value": "cancelled"
+            }
+          ]
+        },
+        "name": "status",
+        "type": "string"
+      },
+      {
+        "options": {
+          "list": [
+            {
+              "title": "Package / Tour",
+              "value": "package"
+            },
+            {
+              "title": "Accommodation",
+              "value": "accommodation"
+            },
+            {
+              "title": "Vehicle",
+              "value": "vehicle"
+            },
+            {
+              "title": "Tour Guide",
+              "value": "guide"
+            },
+            {
+              "title": "Restaurant",
+              "value": "restaurant"
+            },
+            {
+              "title": "Custom Trip",
+              "value": "custom_trip"
+            }
+          ]
+        },
+        "name": "serviceType",
+        "type": "string"
+      },
+      {
+        "name": "serviceName",
+        "type": "string",
+        "title": "Service / Package Name"
+      },
+      {
+        "name": "serviceSlug",
+        "type": "string"
+      },
+      {
+        "name": "travelDate",
+        "type": "date"
+      },
+      {
+        "name": "returnDate",
+        "type": "date"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 1
+              },
+              {
+                "flag": "max",
+                "constraint": 50
+              }
+            ]
+          }
+        ],
+        "name": "guests",
+        "type": "number",
+        "title": "Number of Guests"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "fullName",
+        "type": "string"
+      },
+      {
+        "name": "email",
+        "type": "string"
+      },
+      {
+        "name": "phone",
+        "type": "string",
+        "title": "Phone / WhatsApp"
+      },
+      {
+        "name": "nationality",
+        "type": "string"
+      },
+      {
+        "name": "cnic",
+        "type": "string",
+        "title": "CNIC / Passport No."
+      },
+      {
+        "name": "emergencyName",
+        "type": "string",
+        "title": "Emergency Contact Name"
+      },
+      {
+        "name": "emergencyPhone",
+        "type": "string",
+        "title": "Emergency Contact Phone"
+      },
+      {
+        "name": "dietaryRequirements",
+        "type": "string"
+      },
+      {
+        "rows": 2,
+        "name": "medicalConditions",
+        "type": "text"
+      },
+      {
+        "rows": 3,
+        "name": "message",
+        "type": "text",
+        "title": "Additional Message"
+      },
+      {
+        "name": "sourceUrl",
+        "type": "string",
+        "title": "Booked From URL"
+      },
+      {
+        "readOnly": true,
+        "name": "submittedAt",
+        "type": "datetime"
+      }
+    ],
+    "name": "bookingInquiry",
+    "type": "document",
+    "title": "Booking Inquiries"
+  },
+  {
+    "fields": [
+      {
+        "name": "title",
+        "type": "string",
+        "title": "Site title"
+      },
+      {
+        "rows": 3,
+        "name": "description",
+        "type": "text",
+        "title": "Site description"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "uri",
+                "constraint": {
+                  "options": {
+                    "scheme": [
+                      "/^http$/",
+                      "/^https$/"
+                    ],
+                    "allowRelative": false,
+                    "relativeOnly": false,
+                    "allowCredentials": false
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "name": "siteUrl",
+        "type": "url",
+        "title": "Site URL"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "logo",
+        "type": "mediaImage"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "defaultSeoImage",
+        "type": "mediaImage",
+        "title": "Default SEO image"
+      },
+      {
+        "name": "whatsappNumber",
+        "type": "string",
+        "title": "WhatsApp number"
+      },
+      {
+        "name": "contactEmail",
+        "type": "string",
+        "title": "Contact email"
+      },
+      {
+        "name": "officeLocation",
+        "type": "location",
+        "title": "Office location"
+      },
+      {
+        "of": [
+          {
+            "validation": [
+              {
+                "level": "error",
+                "rules": [
+                  {
+                    "flag": "uri",
+                    "constraint": {
+                      "options": {
+                        "scheme": [
+                          "/^http$/",
+                          "/^https$/"
+                        ],
+                        "allowRelative": false,
+                        "relativeOnly": false,
+                        "allowCredentials": false
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "type": "url"
+          }
+        ],
+        "name": "sameAs",
+        "type": "array",
+        "title": "Social profile URLs"
+      }
+    ],
+    "name": "siteSettings",
+    "type": "document",
+    "title": "Site settings"
+  },
+  {
+    "options": {
+      "collapsible": true,
+      "collapsed": false
+    },
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "warning",
+            "rules": [
+              {
+                "flag": "max",
+                "constraint": 65
+              }
+            ],
+            "message": "Long titles may be truncated in search results."
+          }
+        ],
+        "description": "Aim for 45-60 characters. Use the main search intent first.",
+        "name": "metaTitle",
+        "type": "string",
+        "title": "Meta title"
+      },
+      {
+        "rows": 3,
+        "validation": [
+          {
+            "level": "warning",
+            "rules": [
+              {
+                "flag": "max",
+                "constraint": 170
+              }
+            ],
+            "message": "Long descriptions may be truncated."
+          }
+        ],
+        "description": "Aim for 140-160 characters. Include destination, service type, and trust signal.",
+        "name": "metaDescription",
+        "type": "text",
+        "title": "Meta description"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "description": "Internal planning only. Do not keyword-stuff content.",
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "focusKeywords",
+        "type": "array",
+        "title": "Focus keywords"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "uri",
+                "constraint": {
+                  "options": {
+                    "scheme": [
+                      "/^http$/",
+                      "/^https$/"
+                    ],
+                    "allowRelative": false,
+                    "relativeOnly": false,
+                    "allowCredentials": false
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "name": "canonicalUrl",
+        "type": "url",
+        "title": "Canonical URL"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "ogImage",
+        "type": "mediaImage",
+        "title": "Social share image"
+      },
+      {
+        "initialValue": false,
+        "name": "noIndex",
+        "type": "boolean",
+        "title": "Hide from search engines"
+      }
+    ],
+    "name": "seoFields",
+    "type": "object",
+    "title": "SEO"
+  },
+  {
+    "options": {
+      "hotspot": true
+    },
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "warning",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ],
+            "message": "Alt text helps accessibility and image SEO."
+          }
+        ],
+        "name": "alt",
+        "type": "string",
+        "title": "Alt text"
+      },
+      {
+        "name": "caption",
+        "type": "string"
+      },
+      {
+        "name": "credit",
+        "type": "string"
+      }
+    ],
+    "name": "mediaImage",
+    "type": "image",
+    "title": "Image"
+  },
+  {
+    "fields": [
+      {
+        "name": "title",
+        "type": "string",
+        "title": "Video title"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "uri",
+                "constraint": {
+                  "options": {
+                    "scheme": [
+                      "/^http$/",
+                      "/^https$/"
+                    ],
+                    "allowRelative": false,
+                    "relativeOnly": false,
+                    "allowCredentials": false
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "description": "YouTube, Vimeo, or hosted video URL.",
+        "name": "url",
+        "type": "url",
+        "title": "Video URL"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "name": "thumbnail",
+        "type": "mediaImage"
+      }
+    ],
+    "name": "videoEmbed",
+    "type": "object",
+    "title": "Video"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 0
+              }
+            ]
+          }
+        ],
+        "name": "priceFrom",
+        "type": "number",
+        "title": "Price from"
+      },
+      {
+        "initialValue": "PKR",
+        "options": {
+          "list": [
+            {
+              "title": "PKR",
+              "value": "PKR"
+            },
+            {
+              "title": "USD",
+              "value": "USD"
+            },
+            {
+              "title": "EUR",
+              "value": "EUR"
+            },
+            {
+              "title": "GBP",
+              "value": "GBP"
+            }
+          ]
+        },
+        "name": "currency",
+        "type": "string"
+      },
+      {
+        "options": {
+          "list": [
+            {
+              "title": "Per person",
+              "value": "per_person"
+            },
+            {
+              "title": "Per day",
+              "value": "per_day"
+            },
+            {
+              "title": "Per night",
+              "value": "per_night"
+            },
+            {
+              "title": "Per route",
+              "value": "per_route"
+            },
+            {
+              "title": "Custom quote",
+              "value": "custom_quote"
+            }
+          ]
+        },
+        "name": "unit",
+        "type": "string",
+        "title": "Price unit"
+      },
+      {
+        "description": "Example: Includes driver, fuel, tolls and parking.",
+        "name": "priceNote",
+        "type": "string",
+        "title": "Price note"
+      }
+    ],
+    "name": "pricing",
+    "type": "object"
+  },
+  {
+    "fields": [
+      {
+        "name": "name",
+        "type": "string",
+        "title": "Place name"
+      },
+      {
+        "rows": 2,
+        "name": "address",
+        "type": "text"
+      },
+      {
+        "name": "city",
+        "type": "string",
+        "title": "City / town"
+      },
+      {
+        "name": "region",
+        "type": "string"
+      },
+      {
+        "initialValue": "Pakistan",
+        "name": "country",
+        "type": "string"
+      },
+      {
+        "name": "geo",
+        "type": "geopoint",
+        "title": "Map coordinates"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "uri",
+                "constraint": {
+                  "options": {
+                    "scheme": [
+                      "/^http$/",
+                      "/^https$/"
+                    ],
+                    "allowRelative": false,
+                    "relativeOnly": false,
+                    "allowCredentials": false
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "name": "googleMapsUrl",
+        "type": "url",
+        "title": "Google Maps URL"
+      }
+    ],
+    "name": "location",
+    "type": "object"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "question",
+        "type": "string"
+      },
+      {
+        "rows": 4,
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "answer",
+        "type": "text"
+      }
+    ],
+    "name": "faqItem",
+    "type": "object",
+    "title": "FAQ item"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              },
+              {
+                "flag": "min",
+                "constraint": 1
+              }
+            ]
+          }
+        ],
+        "name": "dayNumber",
+        "type": "number",
+        "title": "Day number"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "title",
+        "type": "string",
+        "title": "Day title"
+      },
+      {
+        "rows": 3,
+        "name": "summary",
+        "type": "text",
+        "title": "Short summary"
+      },
+      {
+        "name": "locationName",
+        "type": "string",
+        "title": "Main location"
+      },
+      {
+        "name": "coordinates",
+        "type": "geopoint",
+        "title": "Map coordinates"
+      },
+      {
+        "name": "routeFrom",
+        "type": "string",
+        "title": "Route from"
+      },
+      {
+        "name": "routeTo",
+        "type": "string",
+        "title": "Route to"
+      },
+      {
+        "name": "distanceKm",
+        "type": "number",
+        "title": "Distance in km"
+      },
+      {
+        "description": "Example: 7 hrs drive",
+        "name": "travelTime",
+        "type": "string",
+        "title": "Travel time"
+      },
+      {
+        "name": "altitudeMeters",
+        "type": "number",
+        "title": "Altitude meters"
+      },
+      {
+        "options": {
+          "list": [
+            "Easy",
+            "Moderate",
+            "Strenuous"
+          ]
+        },
+        "name": "difficulty",
+        "type": "string",
+        "title": "Day difficulty"
+      },
+      {
+        "name": "morningPlan",
+        "type": "portableContent",
+        "title": "Morning plan"
+      },
+      {
+        "name": "afternoonPlan",
+        "type": "portableContent",
+        "title": "Afternoon plan"
+      },
+      {
+        "name": "eveningPlan",
+        "type": "portableContent",
+        "title": "Evening plan"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "mealsIncluded",
+        "type": "array",
+        "title": "Meals included"
+      },
+      {
+        "to": [
+          {
+            "type": "accommodation"
+          }
+        ],
+        "name": "accommodation",
+        "type": "reference"
+      },
+      {
+        "to": [
+          {
+            "type": "vehicle"
+          }
+        ],
+        "name": "vehicle",
+        "type": "reference"
+      },
+      {
+        "to": [
+          {
+            "type": "guide"
+          }
+        ],
+        "name": "guide",
+        "type": "reference"
+      },
+      {
+        "of": [
+          {
+            "to": [
+              {
+                "type": "restaurant"
+              }
+            ],
+            "type": "reference",
+            "title": "Reference to restaurants"
+          }
+        ],
+        "name": "restaurants",
+        "type": "array",
+        "title": "Restaurants / meal stops"
+      },
+      {
+        "of": [
+          {
+            "options": {
+              "hotspot": true
+            },
+            "type": "mediaImage",
+            "title": "Image"
+          }
+        ],
+        "name": "gallery",
+        "type": "array",
+        "title": "Day gallery"
+      },
+      {
+        "name": "video",
+        "type": "videoEmbed",
+        "title": "Day video"
+      },
+      {
+        "name": "featuredMoment",
+        "type": "string",
+        "title": "Featured moment"
+      }
+    ],
+    "name": "itineraryDay",
+    "type": "object",
+    "title": "Itinerary day"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "name",
+        "type": "string",
+        "title": "Room name"
+      },
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "min",
+                "constraint": 1
+              }
+            ]
+          }
+        ],
+        "name": "capacity",
+        "type": "number"
+      },
+      {
+        "name": "beds",
+        "type": "string"
+      },
+      {
+        "name": "pricing",
+        "type": "pricing"
+      },
+      {
+        "options": {
+          "layout": "tags"
+        },
+        "of": [
+          {
+            "type": "string"
+          }
+        ],
+        "name": "amenities",
+        "type": "array"
+      },
+      {
+        "of": [
+          {
+            "options": {
+              "hotspot": true
+            },
+            "type": "mediaImage",
+            "title": "Image"
+          }
+        ],
+        "name": "images",
+        "type": "array",
+        "title": "Room images"
+      }
+    ],
+    "name": "roomType",
+    "type": "object",
+    "title": "Room type"
+  },
+  {
+    "fields": [
+      {
+        "validation": [
+          {
+            "level": "error",
+            "rules": [
+              {
+                "flag": "presence",
+                "constraint": "required"
+              }
+            ]
+          }
+        ],
+        "name": "title",
+        "type": "string"
+      },
+      {
+        "rows": 2,
+        "name": "description",
+        "type": "text"
+      }
+    ],
+    "name": "serviceFeature",
+    "type": "object",
+    "title": "Feature"
+  },
+  {
+    "fields": [
+      {
+        "description": "Example: Mon-Sun",
+        "name": "days",
+        "type": "string"
+      },
+      {
+        "description": "Example: 09:00",
+        "name": "opens",
+        "type": "string"
+      },
+      {
+        "description": "Example: 22:00",
+        "name": "closes",
+        "type": "string"
+      },
+      {
+        "name": "note",
+        "type": "string"
+      }
+    ],
+    "name": "openingHours",
+    "type": "object",
+    "title": "Opening hours"
+  },
+  {
+    "of": [
+      {
+        "lists": [
+          {
+            "value": "bullet",
+            "title": "Bullet"
+          },
+          {
+            "value": "number",
+            "title": "Numbered"
+          }
+        ],
+        "marks": {
+          "annotations": [
+            {
+              "fields": [
+                {
+                  "validation": [
+                    {
+                      "level": "error",
+                      "rules": [
+                        {
+                          "flag": "uri",
+                          "constraint": {
+                            "options": {
+                              "scheme": [
+                                "/^http$/",
+                                "/^https$/"
+                              ],
+                              "allowRelative": false,
+                              "relativeOnly": false,
+                              "allowCredentials": false
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "name": "href",
+                  "type": "url",
+                  "title": "URL"
+                },
+                {
+                  "initialValue": false,
+                  "name": "openInNewTab",
+                  "type": "boolean",
+                  "title": "Open in new tab"
+                }
+              ],
+              "name": "link",
+              "type": "object"
+            }
+          ],
+          "decorators": [
+            {
+              "value": "strong",
+              "title": "Strong"
+            },
+            {
+              "value": "em",
+              "title": "Emphasis"
+            }
+          ]
+        },
+        "of": [],
+        "styles": [
+          {
+            "value": "normal",
+            "title": "Normal"
+          },
+          {
+            "value": "h2",
+            "title": "H2"
+          },
+          {
+            "value": "h3",
+            "title": "H3"
+          },
+          {
+            "value": "blockquote",
+            "title": "Quote"
+          }
+        ],
+        "type": "block"
+      },
+      {
+        "options": {
+          "hotspot": true
+        },
+        "type": "mediaImage",
+        "title": "Image"
+      },
+      {
+        "type": "videoEmbed",
+        "title": "Video"
+      }
+    ],
+    "name": "portableContent",
+    "type": "array",
+    "title": "Rich content"
+  }
+]

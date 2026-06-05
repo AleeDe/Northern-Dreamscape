@@ -1,5 +1,5 @@
 {
-  "createdAt": "2026-06-05T07:49:33.516Z",
+  "createdAt": "2026-06-05T07:56:36.858Z",
   "studioVersion": "5.25.1",
   "version": 3,
   "workspaces": [
@@ -13,7 +13,7 @@
       },
       "name": "northern-dreamscape",
       "projectId": "k6sihcqo",
-      "schema": "95f70b87.create-schema.json",
+      "schema": "fe25e9e1.create-schema.json",
       "title": "Northern Dreamscape",
       "tools": "ef87c8fe.create-tools.json"
     }

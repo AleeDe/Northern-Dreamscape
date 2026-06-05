@@ -1153,8 +1153,6 @@ export function SanityDestinationsPage({ destinations }) {
 
 // ─── Destination Detail ───────────────────────────────────────────────────────
 
-const PLACE_ICONS = { mountain: '⛰️', lake: '🏞️', valley: '🌄', fort: '🏯', village: '🏘️', pass: '🛤️', glacier: '🧊', other: '📍' }
-
 const SERVICE_SECTIONS = [
   { key: 'accommodations', label: 'Where to Stay',   icon: '🏨', href: '/accommodation', type: 'accommodation' },
   { key: 'restaurants',    label: 'Where to Eat',    icon: '🍽️', href: '/restaurants',   type: 'restaurant'    },
