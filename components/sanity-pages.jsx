@@ -1028,6 +1028,21 @@ export function SanityDestinationsPage({ destinations }) {
 
 // ─── Destination Detail ───────────────────────────────────────────────────────
 
+const PLACE_ICONS = { mountain: '⛰️', lake: '🏞️', valley: '🌄', fort: '🏯', village: '🏘️', pass: '🛤️', glacier: '🧊', other: '📍' }
+
+const SERVICE_SECTIONS = [
+  { key: 'accommodations', label: 'Where to Stay',   icon: '🏨', href: '/accommodation', type: 'accommodation' },
+  { key: 'restaurants',    label: 'Where to Eat',    icon: '🍽️', href: '/restaurants',   type: 'restaurant'    },
+  { key: 'guides',         label: 'Tour Guides',     icon: '🧭', href: '/guides',        type: 'guide'         },
+  { key: 'vehicles',       label: 'Vehicles',        icon: '🚙', href: '/vehicles',      type: 'vehicle'       },
+]
+
+function getYoutubeId(url) {
+  if (!url) return null
+  const m = url.match(/(?:youtu\.be\/|v=|embed\/)([a-zA-Z0-9_-]{11})/)
+  return m ? m[1] : null
+}
+
 export function SanityDestinationDetailPage({ destination }) {
   if (!destination) return (
     <div className="nd" style={{ minHeight: '60vh' }}>
@@ -1036,63 +1051,214 @@ export function SanityDestinationDetailPage({ destination }) {
     </div>
   )
 
+  const allGallery = destination.gallery || []
+  const hasServices = SERVICE_SECTIONS.some(s => destination[s.key]?.length > 0)
+
   return (
     <div className="nd">
       <NavLight />
-      <section style={{ position: 'relative', minHeight: 600, display: 'flex', alignItems: 'flex-end', padding: '120px 56px 80px', overflow: 'hidden', color: 'var(--bone)' }}>
+
+      {/* ── Hero ── */}
+      <section style={{ position: 'relative', minHeight: 640, display: 'flex', alignItems: 'flex-end', padding: '140px 56px 80px', overflow: 'hidden', color: 'var(--bone)' }}>
         <div className="photo" style={{ position: 'absolute', inset: 0, backgroundImage: `url(${imgUrl(destination)})` }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(8,22,26,0.88), rgba(8,22,26,0.4), rgba(8,22,26,0.15))' }} />
-        <div className="container-wide" style={{ position: 'relative' }}>
-          <div style={{ display: 'flex', gap: 24, marginBottom: 24 }}>
-            {destination.bestSeason && <span className="mono" style={{ color: 'var(--sand)', fontSize: 13 }}>Best: {destination.bestSeason}</span>}
-            {destination.elevationRange && <span className="mono" style={{ color: 'var(--sand)', fontSize: 13 }}>{destination.elevationRange}</span>}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(8,22,26,0.9) 40%, rgba(8,22,26,0.3))' }} />
+        <div className="container-wide" style={{ position: 'relative', zIndex: 2 }}>
+          <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 22 }}>
+            {destination.bestSeason    && <span className="mono" style={{ color: 'var(--sand)', fontSize: 12 }}>🗓 {destination.bestSeason}</span>}
+            {destination.elevationRange && <span className="mono" style={{ color: 'var(--sand)', fontSize: 12 }}>📐 {destination.elevationRange}</span>}
+            {destination.travelTime    && <span className="mono" style={{ color: 'var(--sand)', fontSize: 12 }}>🚗 {destination.travelTime}</span>}
           </div>
-          <h1 style={{ fontSize: 'clamp(52px, 7vw, 100px)', lineHeight: 0.95, color: 'var(--bone)', maxWidth: 900, marginBottom: 24 }}>{destination.name}</h1>
-          <p style={{ fontSize: 20, lineHeight: 1.6, maxWidth: 680, opacity: 0.9 }}>{destination.tagline || destination.summary}</p>
+          <h1 style={{ fontSize: 'clamp(48px, 7vw, 100px)', lineHeight: 0.95, color: 'var(--bone)', maxWidth: 900, marginBottom: 22 }}>{destination.name}</h1>
+          <p style={{ fontSize: 19, lineHeight: 1.65, maxWidth: 640, opacity: 0.88, marginBottom: 32 }}>{destination.tagline || destination.summary}</p>
+          <BookNowButton serviceName={destination.name} serviceType="custom_trip" serviceSlug={destination.slug || ''} label="Plan a trip here" />
         </div>
       </section>
 
-      <section style={{ background: 'var(--bone)', padding: '80px 56px' }}>
-        <div className="container-wide" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 60 }}>
+      {/* ── Quick facts + summary ── */}
+      <section style={{ background: 'var(--bone)', padding: '72px 56px' }}>
+        <div className="container-wide" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 64, alignItems: 'start' }}>
           <div>
-            <p style={{ fontSize: 18, lineHeight: 1.8, color: 'var(--muted-ink)' }}>{destination.summary}</p>
+            <p style={{ fontSize: 18, lineHeight: 1.85, color: 'var(--muted-ink)', marginBottom: 0 }}>{destination.summary}</p>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-            {destination.bestSeason && (
-              <div style={{ padding: '20px 24px', background: 'var(--bone-2)', border: '1px solid var(--line)' }}>
-                <div className="mono" style={{ color: 'var(--ember)', marginBottom: 6, fontSize: 11 }}>BEST SEASON</div>
-                <div style={{ fontWeight: 600 }}>{destination.bestSeason}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {[
+              { label: 'BEST SEASON',   value: destination.bestSeason },
+              { label: 'ELEVATION',     value: destination.elevationRange },
+              { label: 'CLIMATE',       value: destination.climate },
+              { label: 'FROM ISLAMABAD',value: destination.travelTime },
+            ].filter(r => r.value).map(r => (
+              <div key={r.label} style={{ padding: '16px 20px', background: 'var(--bone-2)', border: '1px solid var(--line)' }}>
+                <div className="mono" style={{ color: 'var(--ember)', marginBottom: 4, fontSize: 10 }}>{r.label}</div>
+                <div style={{ fontWeight: 600, fontSize: 15 }}>{r.value}</div>
               </div>
-            )}
-            {destination.elevationRange && (
-              <div style={{ padding: '20px 24px', background: 'var(--bone-2)', border: '1px solid var(--line)' }}>
-                <div className="mono" style={{ color: 'var(--ember)', marginBottom: 6, fontSize: 11 }}>ELEVATION</div>
-                <div style={{ fontWeight: 600 }}>{destination.elevationRange}</div>
-              </div>
-            )}
-            <a href={WHATSAPP} className="btn btn-ember" target="_blank" rel="noopener noreferrer" style={{ textAlign: 'center' }}>Plan a trip here</a>
+            ))}
           </div>
         </div>
       </section>
 
-      {destination.packages?.length > 0 && (
-        <section style={{ background: 'var(--bone-2)', padding: '80px 56px' }}>
+      {/* ── Photo Gallery ── */}
+      {allGallery.length > 0 && (
+        <section style={{ background: 'var(--ink)', padding: '72px 56px' }}>
           <div className="container-wide">
-            <h2 style={{ fontSize: 52, lineHeight: 1.05, marginBottom: 40 }}>Packages for<br /><em style={{ fontStyle: 'italic', color: 'var(--ember)' }}>{destination.name}.</em></h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 32 }}>
+              <h2 style={{ fontSize: 40, color: 'var(--bone)', margin: 0 }}>Gallery</h2>
+              <span className="mono" style={{ color: 'rgba(245,239,228,0.45)', fontSize: 11 }}>{allGallery.length} PHOTOS</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+              {allGallery.map((g, i) => (
+                <div key={i} style={{ position: 'relative', gridColumn: i === 0 ? 'span 2' : 'span 1' }}>
+                  <div className="photo" style={{ height: i === 0 ? 420 : 207, backgroundImage: `url(${g.image?.asset?.url || imgUrl(g)})` }} />
+                  {g.caption && (
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '8px 12px', background: 'rgba(8,22,26,0.7)', color: 'var(--bone)', fontFamily: 'var(--mono)', fontSize: 10 }}>
+                      {g.caption}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Videos ── */}
+      {destination.videos?.length > 0 && (
+        <section style={{ background: 'var(--bone-2)', padding: '72px 56px' }}>
+          <div className="container-wide">
+            <h2 style={{ fontSize: 40, marginBottom: 32 }}>Videos</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: destination.videos.length === 1 ? '1fr' : 'repeat(2, 1fr)', gap: 24 }}>
+              {destination.videos.map((v, i) => {
+                const ytId = getYoutubeId(v.youtubeUrl)
+                return (
+                  <div key={i}>
+                    {ytId ? (
+                      <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', background: 'var(--ink)' }}>
+                        <iframe
+                          src={`https://www.youtube.com/embed/${ytId}`}
+                          title={v.title || 'Video'}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+                        />
+                      </div>
+                    ) : (
+                      <a href={v.youtubeUrl || v.vimeoUrl} target="_blank" rel="noopener noreferrer"
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 240, background: 'var(--ink)', color: 'var(--bone)', fontSize: 40, textDecoration: 'none' }}>
+                        ▶
+                      </a>
+                    )}
+                    {v.title && <p style={{ marginTop: 10, fontWeight: 600, fontSize: 15 }}>{v.title}</p>}
+                    {v.caption && <p style={{ fontSize: 13, color: 'var(--muted-ink)', marginTop: 4 }}>{v.caption}</p>}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Famous Places ── */}
+      {destination.famousPlaces?.length > 0 && (
+        <section style={{ background: 'var(--bone)', padding: '72px 56px' }}>
+          <div className="container-wide">
+            <div style={{ marginBottom: 40 }}>
+              <div className="eyebrow" style={{ color: 'var(--teal-700)', marginBottom: 14 }}>Must-visit spots</div>
+              <h2 style={{ fontSize: 'clamp(32px, 4vw, 52px)', lineHeight: 1.05, margin: 0 }}>
+                Famous places in <em style={{ fontStyle: 'italic', color: 'var(--ember)' }}>{destination.name}.</em>
+              </h2>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 24 }}>
+              {destination.famousPlaces.map((place, i) => (
+                <div key={i} style={{ background: 'var(--bone-2)', border: '1px solid var(--line)', overflow: 'hidden' }}>
+                  {place.image?.asset?.url && (
+                    <div className="photo" style={{ height: 200, backgroundImage: `url(${place.image.asset.url})` }} />
+                  )}
+                  <div style={{ padding: '20px 22px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                      <h3 style={{ fontSize: 20, lineHeight: 1.2, margin: 0 }}>
+                        {PLACE_ICONS[place.category] || '📍'} {place.name}
+                      </h3>
+                      {place.elevation && <span className="mono" style={{ fontSize: 10, color: 'var(--muted-ink)', flexShrink: 0, marginLeft: 8 }}>{place.elevation}m</span>}
+                    </div>
+                    {place.description && <p style={{ fontSize: 13.5, lineHeight: 1.65, color: 'var(--muted-ink)', margin: '0 0 12px' }}>{place.description}</p>}
+                    {place.mapsLink && (
+                      <a href={place.mapsLink} target="_blank" rel="noopener noreferrer"
+                        className="mono" style={{ fontSize: 10, color: 'var(--teal-700)', letterSpacing: '0.1em' }}>
+                        VIEW ON MAP →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── Linked Services ── */}
+      {hasServices && (
+        <section style={{ background: 'var(--bone-2)', padding: '72px 56px' }}>
+          <div className="container-wide">
+            <div style={{ marginBottom: 48 }}>
+              <div className="eyebrow" style={{ color: 'var(--teal-700)', marginBottom: 14 }}>Book individually</div>
+              <h2 style={{ fontSize: 'clamp(32px, 4vw, 52px)', lineHeight: 1.05, margin: 0 }}>
+                Services in <em style={{ fontStyle: 'italic', color: 'var(--ember)' }}>{destination.name}.</em>
+              </h2>
+            </div>
+            {SERVICE_SECTIONS.map(({ key, label, icon, href, type }) => {
+              const items = destination[key]
+              if (!items?.length) return null
+              return (
+                <div key={key} style={{ marginBottom: 52 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, paddingBottom: 12, borderBottom: '1px solid var(--line)' }}>
+                    <h3 style={{ margin: 0, fontSize: 22 }}>{icon} {label}</h3>
+                    <Link href={href} className="mono" style={{ fontSize: 10, color: 'var(--ember)', letterSpacing: '0.14em' }}>VIEW ALL →</Link>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
+                    {items.map(item => (
+                      <Link key={item._id} href={`${href}/${item.slug}`} className="pkg-card"
+                        style={{ display: 'block', background: 'var(--bone)', color: 'inherit', textDecoration: 'none' }}>
+                        <div className="photo" style={{ height: 180, backgroundImage: `url(${item.portrait?.asset?.url || item.heroImage?.asset?.url || FALLBACK_IMG})` }} />
+                        <div style={{ padding: '18px 20px' }}>
+                          <div className="mono" style={{ color: 'var(--ember)', fontSize: 10, marginBottom: 6 }}>
+                            {item.cuisines?.join(' · ') || item.category || item.type || item.location?.city || type.toUpperCase()}
+                          </div>
+                          <h4 style={{ fontSize: 18, lineHeight: 1.2, marginBottom: 8 }}>{item.name || item.title}</h4>
+                          {item.shortDescription && <p style={{ fontSize: 13, color: 'var(--muted-ink)', lineHeight: 1.55, marginBottom: 12 }}>{item.shortDescription}</p>}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 12, borderTop: '1px solid var(--line)' }}>
+                            <div style={{ fontFamily: 'var(--display)', fontSize: 17 }}>{priceLabel(item.pricing)}</div>
+                            <span className="mono" style={{ fontSize: 10, color: 'var(--ember)' }}>BOOK →</span>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* ── Packages ── */}
+      {destination.packages?.length > 0 && (
+        <section style={{ background: 'var(--bone)', padding: '72px 56px' }}>
+          <div className="container-wide">
+            <h2 style={{ fontSize: 'clamp(32px, 4vw, 52px)', lineHeight: 1.05, marginBottom: 40 }}>
+              Packages for <em style={{ fontStyle: 'italic', color: 'var(--ember)' }}>{destination.name}.</em>
+            </h2>
             <div style={{ display: 'grid', gap: 20 }}>
               {destination.packages.map((pkg) => (
-                <Link key={pkg._id} href={`/packages/${pkg.slug}`} className="pkg-card" style={{ display: 'grid', gridTemplateColumns: '320px 1fr', background: 'var(--bone)', color: 'inherit', textDecoration: 'none' }}>
+                <Link key={pkg._id} href={`/packages/${pkg.slug}`} className="pkg-card"
+                  style={{ display: 'grid', gridTemplateColumns: '320px 1fr', background: 'var(--bone-2)', color: 'inherit', textDecoration: 'none' }}>
                   <div className="photo" style={{ minHeight: 260, backgroundImage: `url(${imgUrl(pkg)})` }} />
                   <div style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
                       <div className="mono" style={{ color: 'var(--teal-700)', marginBottom: 10, fontSize: 12 }}>{pkg.region} · {pkg.days} DAYS · {pkg.difficulty}</div>
-                      <h3 style={{ fontSize: 30, lineHeight: 1.1, marginBottom: 10 }}>{pkg.title}</h3>
+                      <h3 style={{ fontSize: 28, lineHeight: 1.1, marginBottom: 10 }}>{pkg.title}</h3>
                       <p style={{ fontSize: 14, lineHeight: 1.65, color: 'var(--muted-ink)' }}>{pkg.summary || pkg.subtitle}</p>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderTop: '1px solid var(--line)', paddingTop: 18, marginTop: 20 }}>
-                      <div style={{ fontFamily: 'var(--display)', fontSize: 22 }}>
-                        {pkg.pricing?.currency || 'PKR'} {pkg.pricing?.priceFrom?.toLocaleString() || '—'}
-                      </div>
+                      <div style={{ fontFamily: 'var(--display)', fontSize: 22 }}>{priceLabel(pkg.pricing)}</div>
                       <span className="mono" style={{ color: 'var(--ember)' }}>VIEW →</span>
                     </div>
                   </div>
@@ -1103,19 +1269,21 @@ export function SanityDestinationDetailPage({ destination }) {
         </section>
       )}
 
+      {/* ── FAQs ── */}
       {destination.faqs?.length > 0 && (
-        <section style={{ background: 'var(--bone)', padding: '80px 56px' }}>
+        <section style={{ background: 'var(--bone-2)', padding: '72px 56px' }}>
           <div className="container">
-            <h2 style={{ fontSize: 44, marginBottom: 32 }}>Questions about {destination.name}.</h2>
+            <h2 style={{ fontSize: 40, marginBottom: 32 }}>Questions about {destination.name}.</h2>
             {destination.faqs.map((faq) => (
               <div key={faq.question} style={{ borderTop: '1px solid var(--line)', paddingTop: 22, marginTop: 22 }}>
-                <h3 style={{ fontSize: 22, marginBottom: 8 }}>{faq.question}</h3>
+                <h3 style={{ fontSize: 20, marginBottom: 8 }}>{faq.question}</h3>
                 <p style={{ color: 'var(--muted-ink)', lineHeight: 1.7 }}>{faq.answer}</p>
               </div>
             ))}
           </div>
         </section>
       )}
+
       <Footer />
     </div>
   )
